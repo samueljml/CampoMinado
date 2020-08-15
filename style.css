@@ -43,3 +43,13 @@ button:hover {
     box-shadow: 0 9px black;
 }
 button:focus { outline-style: none; }
+.container > div{
+    display: flex;
+}
+.campo{
+    border: 1px solid black;
+    width: 32px;
+    height: 32px;
+    font-size: 20pt;
+    text-align: center;
+}
