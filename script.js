@@ -1,22 +1,81 @@
 var qtd_minas = document.getElementById("minas")
-var largula = document.getElementById("largura")
-var altura = document.getElementById("altura")
+var linhas = document.getElementById("largura")
+var colunas = document.getElementById("altura")
+var matriz = []
 
 document.querySelectorAll(".container p input").forEach((element) => {
     element.onchange = (e) => {
         if(e.target.value < 1) e.target.value = 1;
         else if(e.target.value > 10) e.target.value = 10;
         
-        if(qtd_minas.value > altura.value * largura.value){
-            qtd_minas.value = (altura.value * largura.value) - 1
+        if(qtd_minas.value > linhas.value * colunas.value){
+            qtd_minas.value = (linhas.value * colunas.value) - 1
         }
     }
 });
 
 qtd_minas.onchange= (e) => {   
-    let l = largura.value
-    let a = altura.value
+    let l = linhas.value
+    let a = colunas.value
 
     if(e.target.value >= l*a) e.target.value = (l*a) -1;
     else if(e.target.value < 1)  e.target.value = 1;
+}
+
+function criarCampo(){
+    elementos_tela1 = document.getElementsByClassName("tela1")
+
+    for(i=0; i<elementos_tela1.length; i++){
+        elementos_tela1[i].style.display = 'none'
+    }
+
+    //matriz variavel location
+
+    for(l=0; l<linhas.value; l++){
+        matriz[l] = []
+        for(c=0; c<colunas.value; c++){
+            matriz[l][c] = 0
+        }
+    }
+
+    inserirMinas(matriz, linhas.value, colunas.value, parseInt(qtd_minas.value))
+
+    vizualização_da_matriz(matriz) //Função temporaria (verificação)
+}
+
+function inserirMinas(matriz, linhas, colunas, qtd_minas){
+
+    while(qtd_minas > 0){
+        let x = Math.round(Math.random() * (linhas-1))
+        let y = Math.round(Math.random() * (colunas-1))
+
+        if(matriz[x][y] != '*'){
+            matriz[x][y]='*'
+            incrementarValores(matriz, x, y)
+            qtd_minas--
+        }
+    }
+}
+
+function incrementarValores(matriz, l, c){
+
+    if(!isNaN(matriz[l][c-1])) matriz[l][c-1]++
+    if(!isNaN(matriz[l][c+1])) matriz[l][c+1]++
+
+    if(matriz[l-1] != undefined && !isNaN(matriz[l-1][c])) matriz[l-1][c]++
+    if(matriz[l-1] != undefined && !isNaN(matriz[l-1][c-1])) matriz[l-1][c-1]++
+    if(matriz[l-1] != undefined && !isNaN(matriz[l-1][c+1])) matriz[l-1][c+1]++
+
+    if(matriz[l+1] != undefined && !isNaN(matriz[l+1][c])) matriz[l+1][c]++
+    if(matriz[l+1] != undefined && !isNaN(matriz[l+1][c-1])) matriz[l+1][c-1]++
+    if(matriz[l+1] != undefined && !isNaN(matriz[l+1][c+1])) matriz[l+1][c+1]++
+}
+
+function vizualização_da_matriz(matriz){
+    for(l=0; l<linhas.value; l++){
+        for(c=0; c<colunas.value; c++){
+            matriz[l][c] = matriz[l][c].toString()
+        }
+    }
+    console.log(matriz)
 }

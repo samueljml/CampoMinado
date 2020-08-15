@@ -20,7 +20,7 @@ body{
     height: 400px;
 }
 h1, p{
-    font-family:  'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:  'Segoe UI';
 }
 p{
     font-weight: bold;
