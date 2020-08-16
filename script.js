@@ -42,7 +42,7 @@ function iniciarJogo(){
             matriz[l][c] = 0
         }
     }
-
+    
     inserirMinas(matriz, linhas.value, colunas.value, parseInt(qtd_minas.value))
     
     campo = document.getElementsByClassName("container")[0]
@@ -51,8 +51,8 @@ function iniciarJogo(){
 
     document.querySelectorAll('.container > div > div').forEach((element) => {
         element.onclick = (e) => {
-            var l = e.target.dataset.linha;
-            var c = e.target.dataset.coluna;
+            var l = parseInt(e.target.dataset.linha)
+            var c = parseInt(e.target.dataset.coluna)
 
             if(!element.style.content){
                 if(matriz[l][c] == "*"){
@@ -60,14 +60,13 @@ function iniciarJogo(){
                     element.style.background = src.backgroundBomba
                 }
                 else if(matriz[l][c] == 0){
-                    element.style.background = src.backgroundNumber
-                    //AbrirEspaçosVazios(l, c)
+                    AbrirEspaçosVazios(matriz, l, c)
                 }
                 else{
                     e.target.textContent = matriz[l][c]
                     element.style.background = src.backgroundNumber
     
-                    element.style.color = numberColorSet(e.target.textContent)
+                    element.style.color = coloraçãoNumero(e.target.textContent)
                 }
             }
         }
@@ -128,7 +127,7 @@ function criarTabela(matriz){
     return htmlFinal
 }
 
-function numberColorSet(num){
+function coloraçãoNumero(num){
 
     if(num == 1) return "blue"
     else if(num == 2) return "green"
@@ -138,4 +137,28 @@ function numberColorSet(num){
     else if(num == 6) return "turquoise"
     else if(num == 7) return "black"
     else return "gray"
+}
+
+function AbrirEspaçosVazios(matriz, l, c){
+
+    if(matriz[l] == undefined || matriz[l][c] == undefined) return
+
+    let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
+    e.style.background = src.backgroundNumber
+
+    if(matriz[l][c] != 0) {
+        e.textContent = matriz[l][c]
+        e.style.color = coloraçãoNumero(matriz[l][c])
+        return
+    }
+    matriz[l][c] = undefined
+
+    AbrirEspaçosVazios(matriz, l, c-1)
+    AbrirEspaçosVazios(matriz, l, c+1)
+    AbrirEspaçosVazios(matriz, l-1, c)
+    AbrirEspaçosVazios(matriz, l+1, c)
+    AbrirEspaçosVazios(matriz, l-1, c-1)
+    AbrirEspaçosVazios(matriz, l-1, c+1)
+    AbrirEspaçosVazios(matriz, l+1, c-1)
+    AbrirEspaçosVazios(matriz, l+1, c+1)
 }
