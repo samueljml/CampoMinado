@@ -134,9 +134,9 @@ function coloraçãoNumero(num){
     else if(num == 3) return "red"
     else if(num == 4) return "purple"
     else if(num == 5) return "maroon"
-    else if(num == 6) return "turquoise"
+    else if(num == 6) return "rgb(0, 56, 56)"
     else if(num == 7) return "black"
-    else return "gray"
+    else return "midnightblue"
 }
 
 function AbrirEspaçosVazios(matriz, l, c){
