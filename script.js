@@ -1,7 +1,12 @@
 var qtd_minas = document.getElementById("minas")
 var linhas = document.getElementById("largura")
 var colunas = document.getElementById("altura")
-var bandeiraImg = 'url("assets/imgs/flag.png")'
+
+var src ={
+    bandeiraImg: 'url("assets/imgs/flag.png")',
+    backgroundBomba: 'rgb(177, 59, 49)',
+    backgroundNumber: 'rgb(103, 139, 131)'
+}
 
 document.querySelectorAll(".container p input").forEach((element) => {
     element.onchange = (e) => {
@@ -52,15 +57,15 @@ function iniciarJogo(){
             if(!element.style.content){
                 if(matriz[l][c] == "*"){
                     e.target.textContent = "*"
-                    element.style.background = 'rgb(177, 59, 49)'
+                    element.style.background = src.backgroundBomba
                 }
                 else if(matriz[l][c] == 0){
-                    element.style.background = 'rgb(103, 139, 131)'
-                    //AbrirEspaçosVazios()
+                    element.style.background = src.backgroundNumber
+                    //AbrirEspaçosVazios(l, c)
                 }
                 else{
                     e.target.textContent = matriz[l][c]
-                    element.style.background = 'rgb(103, 139, 131)'
+                    element.style.background = src.backgroundNumber
     
                     element.style.color = numberColorSet(e.target.textContent)
                 }
@@ -68,12 +73,11 @@ function iniciarJogo(){
         }
         element.oncontextmenu = (e) => {
             e.preventDefault();
-            if(!e.target.textContent){
-
+            if(!e.target.textContent && element.style.background != src.backgroundNumber){
                 if(element.style.content == ''){
-                    element.style.content = bandeiraImg
+                    element.style.content = src.bandeiraImg
                 }
-                else if(element.style.content == bandeiraImg){
+                else if(element.style.content == src.bandeiraImg){
                     element.style.content = ''
                 }  
             }  
