@@ -1,6 +1,7 @@
 var qtd_minas = document.getElementById("minas")
 var linhas = document.getElementById("largura")
 var colunas = document.getElementById("altura")
+var bandeiraImg = 'url("assets/imgs/flag.png")'
 
 document.querySelectorAll(".container p input").forEach((element) => {
     element.onchange = (e) => {
@@ -48,28 +49,48 @@ function iniciarJogo(){
             var l = e.target.dataset.linha;
             var c = e.target.dataset.coluna;
 
-            if(matriz[l][c] == "*"){
-                e.target.textContent = matriz[l][c]
-                element.style.background = 'rgb(177, 59, 49)'
+            if(!element.style.content){
+                if(matriz[l][c] == "*"){
+                    e.target.textContent = "*"
+                    element.style.background = 'rgb(177, 59, 49)'
+                }
+                else if(matriz[l][c] == 0){
+                    element.style.background = 'rgb(103, 139, 131)'
+                    //AbrirEspaçosVazios()
+                }
+                else{
+                    e.target.textContent = matriz[l][c]
+                    element.style.background = 'rgb(103, 139, 131)'
+    
+                    element.style.color = numberColorSet(e.target.textContent)
+                }
             }
-            else{
-                e.target.textContent = matriz[l][c]
-                element.style.background = 'rgb(103, 139, 131)'
-            }
+        }
+        element.oncontextmenu = (e) => {
+            e.preventDefault();
+            if(!e.target.textContent){
+
+                if(element.style.content == ''){
+                    element.style.content = bandeiraImg
+                }
+                else if(element.style.content == bandeiraImg){
+                    element.style.content = ''
+                }  
+            }  
         }
     })
 }
 
-function inserirMinas(matriz, linhas, colunas, qtd_minas){
+function inserirMinas(matriz, linhas, colunas, qtdBombas){
 
-    while(qtd_minas > 0){
+    while(qtdBombas > 0){
         let x = Math.round(Math.random() * (linhas-1))
         let y = Math.round(Math.random() * (colunas-1))
 
         if(matriz[x][y] != '*'){
             matriz[x][y]='*'
             incrementarValores(matriz, x, y)
-            qtd_minas--
+            qtdBombas--
         }
     }
 }
@@ -101,4 +122,16 @@ function criarTabela(matriz){
         htmlFinal += '</div>'
     })
     return htmlFinal
+}
+
+function numberColorSet(num){
+
+    if(num == 1) return "blue"
+    else if(num == 2) return "green"
+    else if(num == 3) return "red"
+    else if(num == 4) return "purple"
+    else if(num == 5) return "maroon"
+    else if(num == 6) return "turquoise"
+    else if(num == 7) return "black"
+    else return "gray"
 }

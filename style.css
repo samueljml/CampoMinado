@@ -47,9 +47,16 @@ button:focus { outline-style: none; }
     display: flex;
 }
 .campo{
-    border: 1px solid black;
+    user-select: none;
     width: 32px;
     height: 32px;
-    font-size: 20pt;
+    font-size: 16pt;
+    padding-top: 3px;
     text-align: center;
+    font-family: mineFont;
+    border: 1px solid black;
+}
+@font-face {
+    font-family: "mineFont";
+    src: url("assets/fonts/mine-sweeper.ttf");
 }
