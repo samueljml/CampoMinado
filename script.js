@@ -1,6 +1,7 @@
 var qtd_minas = document.getElementById("minas")
 var linhas = document.getElementById("largura")
 var colunas = document.getElementById("altura")
+var boolJogoTerminou = false
 
 var src ={
     bandeiraImg: 'url("assets/imgs/flag.png")',
@@ -28,6 +29,7 @@ qtd_minas.onchange= (e) => {
 }
 
 function iniciarJogo(){
+
     elementos_tela1 = document.getElementsByClassName("tela1")
 
     for(i=0; i<elementos_tela1.length; i++){
@@ -52,6 +54,8 @@ function iniciarJogo(){
     document.querySelectorAll('.container > #areaCampo > div > div').forEach((element) => {
         element.onclick = (e) => {
 
+            if(boolJogoTerminou) return
+
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
 
@@ -73,6 +77,8 @@ function iniciarJogo(){
             }
         }
         element.oncontextmenu = (e) => {
+
+            if(boolJogoTerminou) return
 
             e.preventDefault();
             if(!e.target.textContent && element.style.background != src.backgroundNumber){
@@ -164,4 +170,17 @@ function AbrirEspaçosVazios(matriz, l, c){
     AbrirEspaçosVazios(matriz, l-1, c+1)
     AbrirEspaçosVazios(matriz, l+1, c-1)
     AbrirEspaçosVazios(matriz, l+1, c+1)
+}
+
+function jogoPerdido(matriz){
+    for(l=0; l<matriz.length; l++){
+        for(c=0; c<matriz[l].length; c++){
+            if(matriz[l][c] == "*"){
+                let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
+                e.textContent = "*"
+                e.style.background = src.backgroundBomba
+            }
+        }
+    }
+    boolJogoTerminou = true
 }
