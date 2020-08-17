@@ -1,7 +1,13 @@
 var qtd_minas = document.getElementById("minas")
+var qtd_bandeiras = document.getElementById("labelQtdBandeiras")
+var lableTempo = document.getElementById("labelTempo")
 var linhas = document.getElementById("largura")
 var colunas = document.getElementById("altura")
-var boolJogoTerminou = false
+var boolJogoTerminou = true
+
+setInterval(function(){
+    if(!boolJogoTerminou) lableTempo.textContent++
+}, 1000);
 
 var src ={
     bandeiraImg: 'url("assets/imgs/flag.png")',
@@ -29,11 +35,17 @@ qtd_minas.onchange= (e) => {
 }
 
 function iniciarJogo(){
+    qtd_bandeiras.textContent = qtd_minas.value
+    boolJogoTerminou = false
 
     elementos_tela1 = document.getElementsByClassName("tela1")
+    elementos_tela2 = document.getElementsByClassName("tela2")
 
     for(i=0; i<elementos_tela1.length; i++){
         elementos_tela1[i].style.display = 'none'
+    }
+    for(i=0; i<elementos_tela2.length; i++){
+        elementos_tela2[i].style.display = 'flex'
     }
 
     let matriz = []
@@ -83,10 +95,14 @@ function iniciarJogo(){
             e.preventDefault();
             if(!e.target.textContent && element.style.background != src.backgroundNumber){
                 if(element.style.content == ''){
-                    element.style.content = src.bandeiraImg
+                    if(qtd_bandeiras.textContent > 0){
+                        element.style.content = src.bandeiraImg
+                        qtd_bandeiras.textContent--
+                    }
                 }
                 else if(element.style.content == src.bandeiraImg){
                     element.style.content = ''
+                    qtd_bandeiras.textContent++
                 }  
             }  
         }
