@@ -45,12 +45,13 @@ function iniciarJogo(){
     
     inserirMinas(matriz, linhas.value, colunas.value, parseInt(qtd_minas.value))
     
-    campo = document.getElementsByClassName("container")[0]
+    campo = document.querySelectorAll(".container > #areaCampo")[0]
 
     campo.innerHTML = criarTabela(matriz)
 
-    document.querySelectorAll('.container > div > div').forEach((element) => {
+    document.querySelectorAll('.container > #areaCampo > div > div').forEach((element) => {
         element.onclick = (e) => {
+
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
 
@@ -58,12 +59,13 @@ function iniciarJogo(){
                 if(matriz[l][c] == "*"){
                     e.target.textContent = "*"
                     element.style.background = src.backgroundBomba
+                    jogoPerdido(matriz)
                 }
                 else if(matriz[l][c] == 0){
                     AbrirEspaçosVazios(matriz, l, c)
                 }
                 else{
-                    e.target.textContent = matriz[l][c]
+                    element.textContent = matriz[l][c]
                     element.style.background = src.backgroundNumber
     
                     element.style.color = coloraçãoNumero(e.target.textContent)
@@ -71,6 +73,7 @@ function iniciarJogo(){
             }
         }
         element.oncontextmenu = (e) => {
+
             e.preventDefault();
             if(!e.target.textContent && element.style.background != src.backgroundNumber){
                 if(element.style.content == ''){

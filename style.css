@@ -14,13 +14,15 @@ body{
     align-items: center;
     justify-content: center;
     background: rgb(29, 124, 103);
-    border-radius: 30px;
-    border: 8px solid #000;
-    width: 350px;
-    height: 400px;
+    border-radius: 5px;
+    border: 5px solid #000;
+    width: auto;
+    height: auto;
 }
 h1, p{
     font-family:  'Segoe UI';
+    margin-left: 30px;
+    margin-right: 30px;
 }
 p{
     font-weight: bold;
@@ -55,6 +57,9 @@ button:focus { outline-style: none; }
     text-align: center;
     font-family: mineFont;
     border: 1px solid black;
+}
+.areaCampo{
+    background: #0E3D33;
 }
 @font-face {
     font-family: "mineFont";
