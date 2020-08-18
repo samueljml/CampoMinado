@@ -213,12 +213,10 @@ function jogoPerdido(matriz){
             if(matriz[l][c] == "*"){
                 let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
                 e.textContent = "*"
-                e.style.background = src.backgroundBomba
             }
         }
     }
     boolJogando = false
-
     elemento.resultadoJogo[0].textContent = "Você Perdeu"
     setVisibilidadeTela(elemento.resultadoJogo, "flex")
 }
