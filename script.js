@@ -1,13 +1,15 @@
-var qtd_minas = document.getElementById("minas")
-var qtd_bandeiras = document.getElementById("labelQtdBandeiras")
-var lableTempo = document.getElementById("labelTempo")
-var linhas = document.getElementById("largura")
-var colunas = document.getElementById("altura")
-var boolJogoTerminou = true
+var boolJogando = true
 
-setInterval(function(){
-    if(!boolJogoTerminou) lableTempo.textContent++
-}, 1000);
+var elemento = {
+    inputMinas: document.getElementById("minas"),
+    inputLinhas: document.getElementById("largura"),
+    inputColunas: document.getElementById("altura"),
+    tela1: document.getElementsByClassName("tela1"),
+    tela2: document.getElementsByClassName("tela2"),
+    lableTempo: document.getElementById("labelTempo"),
+    areaCampoMinado: document.getElementById("areaCampo"),
+    lableBandeiras: document.getElementById("labelQtdBandeiras"),
+}
 
 var src ={
     bandeiraImg: 'url("assets/imgs/flag.png")',
@@ -15,58 +17,64 @@ var src ={
     backgroundNumber: 'rgb(103, 139, 131)'
 }
 
+var coloraçãoNumeros = [
+    "blue",
+    "green",
+    "red",
+    "purple",
+    "maroon",
+    "rgb(0, 56, 56)",
+    "black",
+    "midnightblue"
+]
+
 document.querySelectorAll(".container p input").forEach((element) => {
     element.onchange = (e) => {
         if(e.target.value < 1) e.target.value = 1;
         else if(e.target.value > 10) e.target.value = 10;
         
-        if(qtd_minas.value > linhas.value * colunas.value){
-            qtd_minas.value = (linhas.value * colunas.value) - 1
+        if(elemento.inputMinas.value > elemento.inputLinhas.value * elemento.inputColunas.value){
+            elemento.inputMinas.value = elemento.inputLinhas.value * elemento.inputColunas.value - 1
         }
     }
 });
 
-qtd_minas.onchange= (e) => {   
-    let l = linhas.value
-    let a = colunas.value
+elemento.inputMinas.onchange= (e) => {   
+    let l = elemento.inputLinhas.value
+    let a = elemento.inputColunas.value
 
     if(e.target.value >= l*a) e.target.value = (l*a) -1;
     else if(e.target.value < 1)  e.target.value = 1;
 }
 
+setInterval(function(){
+    if(boolJogando) elemento.lableTempo.textContent++
+}, 1000);
+
 function iniciarJogo(){
-    qtd_bandeiras.textContent = qtd_minas.value
+    elemento.lableBandeiras.textContent = elemento.inputMinas.value
     boolJogoTerminou = false
 
-    elementos_tela1 = document.getElementsByClassName("tela1")
-    elementos_tela2 = document.getElementsByClassName("tela2")
-
-    for(i=0; i<elementos_tela1.length; i++){
-        elementos_tela1[i].style.display = 'none'
-    }
-    for(i=0; i<elementos_tela2.length; i++){
-        elementos_tela2[i].style.display = 'flex'
-    }
+    setVisibilidadeTela(elemento.tela1, "none")
+    setVisibilidadeTela(elemento.tela2, "flex")
 
     let matriz = []
 
-    for(l=0; l<linhas.value; l++){
+    for(l=0; l<elemento.inputLinhas.value; l++){
         matriz[l] = []
-        for(c=0; c<colunas.value; c++){
+        for(c=0; c<elemento.inputColunas.value; c++){
             matriz[l][c] = 0
         }
     }
     
-    inserirMinas(matriz, linhas.value, colunas.value, parseInt(qtd_minas.value))
-    
-    campo = document.querySelectorAll(".container > #areaCampo")[0]
+    criarCampo(matriz, parseInt(elemento.inputMinas.value))
 
-    campo.innerHTML = criarTabela(matriz)
+    elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
 
     document.querySelectorAll('.container > #areaCampo > div > div').forEach((element) => {
         element.onclick = (e) => {
 
-            if(boolJogoTerminou) return
+            if(!boolJogando) return
 
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
@@ -83,37 +91,43 @@ function iniciarJogo(){
                 else{
                     element.textContent = matriz[l][c]
                     element.style.background = src.backgroundNumber
-    
-                    element.style.color = coloraçãoNumero(e.target.textContent)
+                    element.style.color = coloraçãoNumeros[parseInt(e.target.textContent)-1]
                 }
             }
         }
         element.oncontextmenu = (e) => {
 
-            if(boolJogoTerminou) return
+            if(!boolJogando) return
 
             e.preventDefault();
             if(!e.target.textContent && element.style.background != src.backgroundNumber){
                 if(element.style.content == ''){
-                    if(qtd_bandeiras.textContent > 0){
+                    if(elemento.lableBandeiras.textContent > 0){
                         element.style.content = src.bandeiraImg
-                        qtd_bandeiras.textContent--
+                        elemento.lableBandeiras.textContent--
                     }
                 }
                 else if(element.style.content == src.bandeiraImg){
                     element.style.content = ''
-                    qtd_bandeiras.textContent++
+                    elemento.lableBandeiras.textContent++
                 }  
             }  
         }
     })
 }
 
-function inserirMinas(matriz, linhas, colunas, qtdBombas){
+function setVisibilidadeTela(tela, visibilidade){
+
+    for(i=0; i<tela.length; i++){
+        tela[i].style.display = visibilidade
+    }
+}
+
+function criarCampo(matriz, qtdBombas){
 
     while(qtdBombas > 0){
-        let x = Math.round(Math.random() * (linhas-1))
-        let y = Math.round(Math.random() * (colunas-1))
+        let x = Math.round(Math.random() * (elemento.inputLinhas.value-1))
+        let y = Math.round(Math.random() * (elemento.inputColunas.value-1))
 
         if(matriz[x][y] != '*'){
             matriz[x][y]='*'
@@ -137,7 +151,7 @@ function incrementarValores(matriz, l, c){
     if(matriz[l+1] != undefined && !isNaN(matriz[l+1][c+1])) matriz[l+1][c+1]++
 }
 
-function criarTabela(matriz){
+function criarCampoHTML(matriz){
     let htmlFinal = ''
     
     matriz.forEach((linhas) => {
@@ -152,18 +166,6 @@ function criarTabela(matriz){
     return htmlFinal
 }
 
-function coloraçãoNumero(num){
-
-    if(num == 1) return "blue"
-    else if(num == 2) return "green"
-    else if(num == 3) return "red"
-    else if(num == 4) return "purple"
-    else if(num == 5) return "maroon"
-    else if(num == 6) return "rgb(0, 56, 56)"
-    else if(num == 7) return "black"
-    else return "midnightblue"
-}
-
 function AbrirEspaçosVazios(matriz, l, c){
 
     if(matriz[l] == undefined || matriz[l][c] == undefined) return
@@ -173,7 +175,7 @@ function AbrirEspaçosVazios(matriz, l, c){
 
     if(matriz[l][c] != 0) {
         e.textContent = matriz[l][c]
-        e.style.color = coloraçãoNumero(matriz[l][c])
+        e.style.color = coloraçãoNumeros[parseInt(matriz[l][c])-1] 
         return
     }
     matriz[l][c] = undefined
@@ -198,5 +200,5 @@ function jogoPerdido(matriz){
             }
         }
     }
-    boolJogoTerminou = true
+    boolJogando = false
 }
