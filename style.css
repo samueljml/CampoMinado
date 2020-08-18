@@ -34,7 +34,7 @@ p{
     font-weight: bold;
 }
 input{
-    width: 30px;
+    width: 24px;
 }
 button{
     cursor: pointer;
@@ -45,6 +45,9 @@ button{
     margin-top: 15px;
     width: 50%;
     height: 50px;
+    font-size: 14pt;
+    align-items: center;
+    justify-content: center;
 }
 button:hover {
     background-color: rgb(141, 141, 141);
@@ -91,6 +94,18 @@ button:focus { outline-style: none; }
     padding-bottom: 0px;
     margin-bottom: 10px;
     border-radius: 35px;
+}
+#resultadoJogo{
+    font-size: 24pt;
+    display: none;
+    font-weight: bold;
+}
+#statusJogo > button{
+    width: 190px;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    box-shadow: none;
+    font-size: 20pt;
 }
 @font-face {
     font-family: "mineFont";

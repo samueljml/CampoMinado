@@ -1,4 +1,5 @@
 var boolJogando = true
+var camposFechados = 0
 
 var elemento = {
     inputMinas: document.getElementById("minas"),
@@ -9,12 +10,12 @@ var elemento = {
     lableTempo: document.getElementById("labelTempo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableBandeiras: document.getElementById("labelQtdBandeiras"),
+    resultadoJogo: document.querySelectorAll("#statusJogo>#resultadoJogo")
 }
-
-var src ={
-    bandeiraImg: 'url("assets/imgs/flag.png")',
+var src = {
     backgroundBomba: 'rgb(177, 59, 49)',
-    backgroundNumber: 'rgb(103, 139, 131)'
+    backgroundNumber: 'rgb(103, 139, 131)',
+    imgBandeira: 'url("assets/imgs/flag.png")'
 }
 
 var coloraçãoNumeros = [
@@ -28,9 +29,11 @@ var coloraçãoNumeros = [
     "midnightblue"
 ]
 
+//Limitação dos valores do input (linha e coluna)
 document.querySelectorAll(".container p input").forEach((element) => {
     element.onchange = (e) => {
-        if(e.target.value < 1) e.target.value = 1;
+
+        if(e.target.value < 3) e.target.value = 3;
         else if(e.target.value > 10) e.target.value = 10;
         
         if(elemento.inputMinas.value > elemento.inputLinhas.value * elemento.inputColunas.value){
@@ -39,12 +42,13 @@ document.querySelectorAll(".container p input").forEach((element) => {
     }
 });
 
+//Limitação dos valores do input (Quantidade de bombas)
 elemento.inputMinas.onchange= (e) => {   
     let l = elemento.inputLinhas.value
-    let a = elemento.inputColunas.value
+    let c = elemento.inputColunas.value
 
-    if(e.target.value >= l*a) e.target.value = (l*a) -1;
-    else if(e.target.value < 1)  e.target.value = 1;
+    if (e.target.value >= l*c) e.target.value = (l*c) -1;
+    else if (e.target.value < 1) e.target.value = 1;
 }
 
 setInterval(function(){
@@ -52,8 +56,12 @@ setInterval(function(){
 }, 1000);
 
 function iniciarJogo(){
+
+    boolJogando = true
+    minasAbertas = 0
+    elemento.lableTempo.textContent = 0;
     elemento.lableBandeiras.textContent = elemento.inputMinas.value
-    boolJogoTerminou = false
+    camposFechados = elemento.inputColunas.value * elemento.inputLinhas.value
 
     setVisibilidadeTela(elemento.tela1, "none")
     setVisibilidadeTela(elemento.tela2, "flex")
@@ -67,6 +75,7 @@ function iniciarJogo(){
         }
     }
     
+    // Inserir as minas e os numeros
     criarCampo(matriz, parseInt(elemento.inputMinas.value))
 
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
@@ -79,7 +88,7 @@ function iniciarJogo(){
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
 
-            if(!element.style.content){
+            if(!element.textContent){
                 if(matriz[l][c] == "*"){
                     e.target.textContent = "*"
                     element.style.background = src.backgroundBomba
@@ -92,6 +101,9 @@ function iniciarJogo(){
                     element.textContent = matriz[l][c]
                     element.style.background = src.backgroundNumber
                     element.style.color = coloraçãoNumeros[parseInt(e.target.textContent)-1]
+                    matriz[l][c] = undefined
+                    camposFechados--
+                    verificarVitoria()
                 }
             }
         }
@@ -103,11 +115,13 @@ function iniciarJogo(){
             if(!e.target.textContent && element.style.background != src.backgroundNumber){
                 if(element.style.content == ''){
                     if(elemento.lableBandeiras.textContent > 0){
-                        element.style.content = src.bandeiraImg
+                        element.style.content = src.imgBandeira
                         elemento.lableBandeiras.textContent--
+
+                        verificarVitoria()
                     }
                 }
-                else if(element.style.content == src.bandeiraImg){
+                else if(element.style.content == src.imgBandeira){
                     element.style.content = ''
                     elemento.lableBandeiras.textContent++
                 }  
@@ -173,9 +187,12 @@ function AbrirEspaçosVazios(matriz, l, c){
     let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
     e.style.background = src.backgroundNumber
 
+    camposFechados--
+
     if(matriz[l][c] != 0) {
         e.textContent = matriz[l][c]
-        e.style.color = coloraçãoNumeros[parseInt(matriz[l][c])-1] 
+        e.style.color = coloraçãoNumeros[  parseInt(matriz[l][c])-1  ] 
+        matriz[l][c] = undefined
         return
     }
     matriz[l][c] = undefined
@@ -201,4 +218,26 @@ function jogoPerdido(matriz){
         }
     }
     boolJogando = false
+
+    elemento.resultadoJogo[0].textContent = "Você Perdeu"
+    setVisibilidadeTela(elemento.resultadoJogo, "flex")
+}
+
+function jogoGanho(){
+    boolJogando = false
+    elemento.resultadoJogo[0].textContent = "Você Ganhou"
+    setVisibilidadeTela(elemento.resultadoJogo, "flex")
+}
+
+function reiniciarJogo(){
+
+    setVisibilidadeTela(elemento.tela2, "none")
+    setVisibilidadeTela(elemento.tela1, "flex")
+    setVisibilidadeTela(elemento.resultadoJogo, "none")
+}
+
+function verificarVitoria(){
+    if(camposFechados == elemento.inputMinas.value && elemento.lableBandeiras.textContent == 0){
+        jogoGanho()
+    }
 }
