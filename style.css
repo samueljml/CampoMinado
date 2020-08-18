@@ -4,9 +4,15 @@ html, body {
     margin: 0px;
 }
 body{
+    background: gray;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+div{
+    padding: 0px;
+    margin: 0px;
 }
 .container{
     display: flex;
@@ -72,8 +78,19 @@ button:focus { outline-style: none; }
     margin-right: 8px;
 }
 #statusJogo{
+    display: none;
+    background: rgb(29, 124, 103);
+    border: 5px solid black;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 220px;
+    height: auto;
+    padding: 5px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-bottom: 10px;
+    border-radius: 35px;
 }
 @font-face {
     font-family: "mineFont";
