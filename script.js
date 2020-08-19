@@ -1,5 +1,5 @@
-var boolJogando = true
-var camposFechados = 0
+var boolJogando = false
+var camposOcultos = 0
 
 var elemento = {
     inputMinas: document.getElementById("minas"),
@@ -8,14 +8,16 @@ var elemento = {
     tela1: document.getElementsByClassName("tela1"),
     tela2: document.getElementsByClassName("tela2"),
     lableTempo: document.getElementById("labelTempo"),
+    statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableBandeiras: document.getElementById("labelQtdBandeiras"),
     resultadoJogo: document.querySelectorAll("#statusJogo>#resultadoJogo")
 }
+
 var src = {
     backgroundBomba: 'rgb(177, 59, 49)',
-    backgroundNumber: 'rgb(103, 139, 131)',
-    imgBandeira: 'url("assets/imgs/flag.png")'
+    imgBandeira: 'url("assets/imgs/flag.png")',
+    backgroundCampoAberto: 'rgb(103, 139, 131)'
 }
 
 var coloraçãoNumeros = [
@@ -51,20 +53,19 @@ elemento.inputMinas.onchange= (e) => {
     else if (e.target.value < 1) e.target.value = 1;
 }
 
+//Atualiza tempo de jogo
 setInterval(function(){
     if(boolJogando) elemento.lableTempo.textContent++
 }, 1000);
 
 function iniciarJogo(){
 
-    boolJogando = true
-    minasAbertas = 0
-    elemento.lableTempo.textContent = 0;
-    elemento.lableBandeiras.textContent = elemento.inputMinas.value
-    camposFechados = elemento.inputColunas.value * elemento.inputLinhas.value
-
     setVisibilidadeTela(elemento.tela1, "none")
     setVisibilidadeTela(elemento.tela2, "flex")
+
+    boolJogando = true
+    elemento.lableBandeiras.textContent = elemento.inputMinas.value
+    camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
 
     let matriz = []
 
@@ -75,34 +76,36 @@ function iniciarJogo(){
         }
     }
     
-    // Inserir as minas e os numeros
-    criarCampo(matriz, parseInt(elemento.inputMinas.value))
+    // Insere as minas e os numeros na matriz e retorna as coordenas das bombas
+    let localBombas = criarCampo(matriz, parseInt(elemento.inputMinas.value))
 
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
 
+    // Click do mouse nos campos
     document.querySelectorAll('.container > #areaCampo > div > div').forEach((element) => {
         element.onclick = (e) => {
 
-            if(!boolJogando) return
+            if(!boolJogando || e.target.style.content == src.imgBandeira) return
 
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
 
-            if(!element.textContent){
+            if(!e.target.textContent){
                 if(matriz[l][c] == "*"){
-                    e.target.textContent = "*"
-                    element.style.background = src.backgroundBomba
-                    jogoPerdido(matriz)
+                    e.target.textContent = matriz[l][c]
+                    e.target.style.background = src.backgroundBomba
+                    jogoPerdido(localBombas)
                 }
                 else if(matriz[l][c] == 0){
                     AbrirEspaçosVazios(matriz, l, c)
                 }
                 else{
-                    element.textContent = matriz[l][c]
-                    element.style.background = src.backgroundNumber
-                    element.style.color = coloraçãoNumeros[parseInt(e.target.textContent)-1]
+                    e.target.textContent = matriz[l][c]
+                    e.target.style.background = src.backgroundCampoAberto
+                    e.target.style.color = coloraçãoNumeros[parseInt(e.target.textContent)-1]
                     matriz[l][c] = undefined
-                    camposFechados--
+                    camposOcultos--
+
                     verificarVitoria()
                 }
             }
@@ -112,17 +115,17 @@ function iniciarJogo(){
             if(!boolJogando) return
 
             e.preventDefault();
-            if(!e.target.textContent && element.style.background != src.backgroundNumber){
-                if(element.style.content == ''){
+            if(!e.target.textContent && e.target.style.background != src.backgroundCampoAberto){
+                if(e.target.style.content == ''){
                     if(elemento.lableBandeiras.textContent > 0){
-                        element.style.content = src.imgBandeira
+                        e.target.style.content = src.imgBandeira
                         elemento.lableBandeiras.textContent--
 
-                        verificarVitoria()
+                        verificarVitoria(camposOcultos)
                     }
                 }
-                else if(element.style.content == src.imgBandeira){
-                    element.style.content = ''
+                else if(e.target.style.content == src.imgBandeira){
+                    e.target.style.content = ''
                     elemento.lableBandeiras.textContent++
                 }  
             }  
@@ -139,16 +142,20 @@ function setVisibilidadeTela(tela, visibilidade){
 
 function criarCampo(matriz, qtdBombas){
 
+    let localBombas = []
+
     while(qtdBombas > 0){
         let x = Math.round(Math.random() * (elemento.inputLinhas.value-1))
         let y = Math.round(Math.random() * (elemento.inputColunas.value-1))
 
         if(matriz[x][y] != '*'){
             matriz[x][y]='*'
+            localBombas[localBombas.length] = [x, y]
             incrementarValores(matriz, x, y)
             qtdBombas--
         }
     }
+    return localBombas
 }
 
 function incrementarValores(matriz, l, c){
@@ -183,15 +190,19 @@ function criarCampoHTML(matriz){
 function AbrirEspaçosVazios(matriz, l, c){
 
     if(matriz[l] == undefined || matriz[l][c] == undefined) return
-
+    
     let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
-    e.style.background = src.backgroundNumber
+    e.style.background = src.backgroundCampoAberto
+    camposOcultos--
 
-    camposFechados--
+    if(e.style.content == src.imgBandeira) {
+        e.style.content = ''
+        elemento.lableBandeiras.textContent++
+    }
 
     if(matriz[l][c] != 0) {
         e.textContent = matriz[l][c]
-        e.style.color = coloraçãoNumeros[  parseInt(matriz[l][c])-1  ] 
+        e.style.color = coloraçãoNumeros[parseInt(matriz[l][c])-1] 
         matriz[l][c] = undefined
         return
     }
@@ -207,35 +218,38 @@ function AbrirEspaçosVazios(matriz, l, c){
     AbrirEspaçosVazios(matriz, l+1, c+1)
 }
 
-function jogoPerdido(matriz){
-    for(l=0; l<matriz.length; l++){
-        for(c=0; c<matriz[l].length; c++){
-            if(matriz[l][c] == "*"){
-                let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
-                e.textContent = "*"
-            }
-        }
-    }
+function jogoPerdido(localBombas){
+
     boolJogando = false
     elemento.resultadoJogo[0].textContent = "Você Perdeu"
-    setVisibilidadeTela(elemento.resultadoJogo, "flex")
+    elemento.areaCampoMinado.style = "animation: shake 0.4s"
+    let i = 0
+
+    setInterval(function(){
+        if(i < localBombas.length) {
+            let [x, y] = localBombas[i++]
+            let e = document.querySelector('div[data-linha="' + (x) + '"][data-coluna="' + (y) + '"]');
+            e.textContent = "*"
+        }
+        else if (i++ == localBombas.length) setVisibilidadeTela(elemento.resultadoJogo, "flex")
+
+    }, 120-(localBombas.length));
 }
 
-function jogoGanho(){
-    boolJogando = false
-    elemento.resultadoJogo[0].textContent = "Você Ganhou"
-    setVisibilidadeTela(elemento.resultadoJogo, "flex")
+function verificarVitoria(){
+    if(camposOcultos == elemento.inputMinas.value && elemento.lableBandeiras.textContent == 0){
+        boolJogando = false
+        elemento.resultadoJogo[0].textContent = "Você Ganhou"
+        setVisibilidadeTela(elemento.resultadoJogo, "flex")
+    }
 }
 
 function reiniciarJogo(){
 
+    elemento.lableTempo.textContent = 0
+    elemento.areaCampoMinado.style = "animation: none"
+
     setVisibilidadeTela(elemento.tela2, "none")
     setVisibilidadeTela(elemento.tela1, "flex")
     setVisibilidadeTela(elemento.resultadoJogo, "none")
-}
-
-function verificarVitoria(){
-    if(camposFechados == elemento.inputMinas.value && elemento.lableBandeiras.textContent == 0){
-        jogoGanho()
-    }
 }
