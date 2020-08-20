@@ -242,9 +242,20 @@ function jogoPerdido(localBombas){
 
     setInterval(function(){
         if(i < localBombas.length) {
+
+            //Interromper 
+            document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
+                element.onclick = (e) => {
+                    for(; i < localBombas.length-1; i++){
+                        
+                        let [x, y] = localBombas[i]
+                        mostrarBomba(x, y)
+                    }
+                }
+            })
+            
             let [x, y] = localBombas[i++]
-            let e = document.querySelector('div[data-linha="' + (x) + '"][data-coluna="' + (y) + '"]');
-            e.textContent = "*"
+            mostrarBomba(x, y)
         }
         else if (i++ == localBombas.length) setVisibilidadeTela(elemento.resultadoJogo, "flex")
 
@@ -254,14 +265,19 @@ function jogoPerdido(localBombas){
 function verificarVitoria(){
     if(camposOcultos == elemento.inputMinas.value && elemento.lableBandeiras.textContent == 0){
         boolJogando = false
+
         elemento.resultadoJogo[0].textContent = "Você Ganhou"
         setVisibilidadeTela(elemento.resultadoJogo, "flex")
     }
 }
 
+function mostrarBomba(x, y){
+    let e = document.querySelector('div[data-linha="' + (x) + '"][data-coluna="' + (y) + '"]');
+    e.textContent = "*"
+}
+
 function reiniciarJogo(){
 
-    elemento.lableTempo.textContent = 0
     for(lable of elemento.lableTempo) lable.textContent = 0
     elemento.areaCampoMinado.style = "animation: none"
     tempoMaximo = false
