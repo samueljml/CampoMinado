@@ -40,6 +40,7 @@ p{
 }
 input{
     width: 35px;
+    background: rgb(138, 195, 183);
 }
 #Proporção > input{
     width: 35px;
@@ -83,22 +84,17 @@ button:focus { outline-style: none; }
 .tela2{
     display: none;
 }
-.areaCampo{
-    background: #0E3D33;
-}
 #labelQtdBandeiras, #labelTempo{
     font-family:  'Segoe UI';
     font-size: 30pt;
     margin-bottom: 3px;
-    margin-left: 8px;
-    margin-right: 8px;
 }
 #statusJogo{
     display: none;
     background: rgb(29, 124, 103);
     border: 5px solid black;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     flex-wrap: wrap;
     width: 220px;
     height: auto;
@@ -106,16 +102,17 @@ button:focus { outline-style: none; }
     padding-top: 0px;
     padding-bottom: 0px;
     margin-bottom: 10px;
-    border-radius: 35px;
+    border-radius: 15px;
 }
 #resultadoJogo{
-    font-size: 24pt;
+    font-size: 27pt;
     display: none;
     font-weight: bold;
 }
 #statusJogo > button{
-    width: 190px;
-    margin-bottom: 15px;
+    width: 205px;
+    height: 50px;
+    margin-bottom: 20px;
     margin-top: 5px;
     font-size: 20pt;
 }

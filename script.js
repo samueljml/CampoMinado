@@ -1,26 +1,26 @@
-var boolJogando = false
-var camposOcultos = 0
+let boolJogando = false
+let camposOcultos = 0
 
-var elemento = {
+let elemento = {
     inputMinas: document.getElementById("minas"),
     inputLinhas: document.getElementById("largura"),
     inputColunas: document.getElementById("altura"),
     tela1: document.getElementsByClassName("tela1"),
     tela2: document.getElementsByClassName("tela2"),
-    lableTempo: document.getElementById("labelTempo"),
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
+    lableTempo: document.querySelectorAll("#labelTempo>div"),
     lableBandeiras: document.getElementById("labelQtdBandeiras"),
     resultadoJogo: document.querySelectorAll("#statusJogo>#resultadoJogo")
 }
 
-var src = {
+let src = {
     backgroundBomba: 'rgb(177, 59, 49)',
     imgBandeira: 'url("assets/imgs/flag.png")',
     backgroundCampoAberto: 'rgb(103, 139, 131)'
 }
 
-var coloraçãoNumeros = [
+let coloraçãoNumeros = [
     "blue",
     "green",
     "red",
@@ -54,8 +54,23 @@ elemento.inputMinas.onchange= (e) => {
 }
 
 //Atualiza tempo de jogo
+let tempoMaximo = false
 setInterval(function(){
-    if(boolJogando) elemento.lableTempo.textContent++
+    if(boolJogando){
+        
+        if(!tempoMaximo){
+        
+            if(++elemento.lableTempo[2].textContent == 10){
+                elemento.lableTempo[2].textContent = 0
+    
+                if(++elemento.lableTempo[1].textContent == 10) {
+                    elemento.lableTempo[1].textContent = 0
+                    elemento.lableTempo[0].textContent++
+                }
+            }
+            if(elemento.lableTempo[2].textContent == 9 && elemento.lableTempo[1].textContent == 9 && elemento.lableTempo[0].textContent == 9) tempoMaximo = true
+        }
+    } 
 }, 1000);
 
 function iniciarJogo(){
@@ -82,7 +97,7 @@ function iniciarJogo(){
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
 
     // Click do mouse nos campos
-    document.querySelectorAll('.container > #areaCampo > div > div').forEach((element) => {
+    document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
         element.onclick = (e) => {
 
             if(!boolJogando || e.target.style.content == src.imgBandeira) return
@@ -247,7 +262,9 @@ function verificarVitoria(){
 function reiniciarJogo(){
 
     elemento.lableTempo.textContent = 0
+    for(lable of elemento.lableTempo) lable.textContent = 0
     elemento.areaCampoMinado.style = "animation: none"
+    tempoMaximo = false
 
     setVisibilidadeTela(elemento.tela2, "none")
     setVisibilidadeTela(elemento.tela1, "flex")
