@@ -10,6 +10,7 @@ let elemento = {
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableTempo: document.querySelectorAll("#labelTempo>div"),
+    container: document.getElementsByClassName("container")[0],
     lableBandeiras: document.getElementById("labelQtdBandeiras"),
     resultadoJogo: document.querySelectorAll("#statusJogo>#resultadoJogo")
 }
@@ -257,7 +258,10 @@ function jogoPerdido(localBombas){
             let [x, y] = localBombas[i++]
             mostrarBomba(x, y)
         }
-        else if (i++ == localBombas.length) setVisibilidadeTela(elemento.resultadoJogo, "flex")
+        else if (i++ == localBombas.length) {
+            setVisibilidadeTela(elemento.resultadoJogo, "flex")
+            elemento.container.style.filter = "brightness(37%)"
+        }
 
     }, 120-(localBombas.length));
 }
@@ -279,6 +283,7 @@ function mostrarBomba(x, y){
 function reiniciarJogo(){
 
     for(lable of elemento.lableTempo) lable.textContent = 0
+    elemento.container.style.filter = "brightness(100%)"
     elemento.areaCampoMinado.style = "animation: none"
     tempoMaximo = false
 
