@@ -1,4 +1,5 @@
 let boolJogando = false
+let boolTempoMaximo = false
 let camposOcultos = 0
 
 let elemento = {
@@ -16,6 +17,11 @@ let elemento = {
 }
 
 let src = {
+    bomba: "*",
+    txtPerdeu: 'Você Perdeu',
+    txtGanhou: 'Você Ganhou',
+    escurecer: 'brightness(37%)',
+    shakeAnimation: "shake 0.4s",
     backgroundBomba: 'rgb(177, 59, 49)',
     imgBandeira: 'url("assets/imgs/flag.png")',
     backgroundCampoAberto: 'rgb(103, 139, 131)'
@@ -27,10 +33,16 @@ let coloraçãoNumeros = [
     "red",
     "purple",
     "maroon",
-    "rgb(0, 56, 56)",
+    "#003838",
     "black",
     "midnightblue"
 ]
+
+let tempo = {
+    unidade: elemento.lableTempo[2],
+    dezena: elemento.lableTempo[1],
+    centena: elemento.lableTempo[0]
+}
 
 //Limitação dos valores do input (linha e coluna)
 document.querySelectorAll(".container p input").forEach((element) => {
@@ -45,7 +57,7 @@ document.querySelectorAll(".container p input").forEach((element) => {
     }
 });
 
-//Limitação dos valores do input (Quantidade de bombas)
+//Limitação do valor do input (Quantidade de bombas)
 elemento.inputMinas.onchange= (e) => {   
     let l = elemento.inputLinhas.value
     let c = elemento.inputColunas.value
@@ -55,24 +67,22 @@ elemento.inputMinas.onchange= (e) => {
 }
 
 //Atualiza tempo de jogo
-let tempoMaximo = false
 setInterval(function(){
-    if(boolJogando){
+    if(boolJogando && !boolTempoMaximo){
         
-        if(!tempoMaximo){
-        
-            if(++elemento.lableTempo[2].textContent == 10){
-                elemento.lableTempo[2].textContent = 0
-    
-                if(++elemento.lableTempo[1].textContent == 10) {
-                    elemento.lableTempo[1].textContent = 0
-                    elemento.lableTempo[0].textContent++
-                }
+        if(++tempo.unidade.textContent == 10){
+            tempo.unidade.textContent = 0
+
+            if(++tempo.dezena.textContent == 10) {
+                tempo.dezena.textContent = 0
+                tempo.centena.textContent++
             }
-            if(elemento.lableTempo[2].textContent == 9 && elemento.lableTempo[1].textContent == 9 && elemento.lableTempo[0].textContent == 9) tempoMaximo = true
         }
+        if(tempo.unidade.textContent == 9 && tempo.dezena.textContent == 9 && tempo.centena.textContent == 9) boolTempoMaximo = true
     } 
 }, 1000);
+
+var matriz = []
 
 function iniciarJogo(){
 
@@ -82,8 +92,6 @@ function iniciarJogo(){
     boolJogando = true
     elemento.lableBandeiras.textContent = elemento.inputMinas.value
     camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
-
-    let matriz = []
 
     for(l=0; l<elemento.inputLinhas.value; l++){
         matriz[l] = []
@@ -101,52 +109,57 @@ function iniciarJogo(){
     document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
         element.onclick = (e) => {
 
-            if(!boolJogando || e.target.style.content == src.imgBandeira) return
+            if(!boolJogando || !campoDisponivel(e.target)) return
 
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
 
-            if(!e.target.textContent){
-                if(matriz[l][c] == "*"){
-                    e.target.textContent = matriz[l][c]
-                    e.target.style.background = src.backgroundBomba
-                    jogoPerdido(localBombas)
-                }
-                else if(matriz[l][c] == 0){
-                    AbrirEspaçosVazios(matriz, l, c)
-                }
-                else{
-                    e.target.textContent = matriz[l][c]
-                    e.target.style.background = src.backgroundCampoAberto
-                    e.target.style.color = coloraçãoNumeros[parseInt(e.target.textContent)-1]
-                    matriz[l][c] = undefined
-                    camposOcultos--
-
-                    verificarVitoria()
-                }
+            if(matriz[l][c] == src.bomba){
+                e.target.textContent = src.bomba
+                e.target.style.background = src.backgroundBomba
+                jogoPerdido(localBombas)
             }
+            else if(matriz[l][c] == 0) AbrirEspaçosVazios(matriz, l, c)
+            else{
+                mostarNumero(e.target, matriz[l][c])
+                matriz[l][c] = undefined
+                camposOcultos--
+
+                verificarVitoria()
+            }
+            
         }
         element.oncontextmenu = (e) => {
 
+            e.preventDefault();
+
             if(!boolJogando) return
 
-            e.preventDefault();
-            if(!e.target.textContent && e.target.style.background != src.backgroundCampoAberto){
-                if(e.target.style.content == ''){
-                    if(elemento.lableBandeiras.textContent > 0){
-                        e.target.style.content = src.imgBandeira
-                        elemento.lableBandeiras.textContent--
+            if(campoDisponivel(e.target)){
+                if(elemento.lableBandeiras.textContent > 0){
+                    e.target.style.content = src.imgBandeira
+                    elemento.lableBandeiras.textContent--
 
-                        verificarVitoria(camposOcultos)
-                    }
+                    verificarVitoria(camposOcultos)
                 }
-                else if(e.target.style.content == src.imgBandeira){
-                    e.target.style.content = ''
-                    elemento.lableBandeiras.textContent++
-                }  
+            }
+            else if(e.target.style.content == src.imgBandeira){
+                e.target.style.content = ''
+                elemento.lableBandeiras.textContent++
             }  
         }
     })
+}
+
+function campoDisponivel(campo){
+    if(campo.textContent == '' && campo.style.background != src.backgroundCampoAberto && campo.style.content != src. imgBandeira) return true
+    return false
+}
+
+function mostarNumero(e, numero){
+    e.textContent = numero
+    e.style.background = src.backgroundCampoAberto
+    e.style.color = coloraçãoNumeros[parseInt(numero)-1]
 }
 
 function setVisibilidadeTela(tela, visibilidade){
@@ -164,8 +177,8 @@ function criarCampo(matriz, qtdBombas){
         let x = Math.round(Math.random() * (elemento.inputLinhas.value-1))
         let y = Math.round(Math.random() * (elemento.inputColunas.value-1))
 
-        if(matriz[x][y] != '*'){
-            matriz[x][y]='*'
+        if(matriz[x][y] != src.bomba){
+            matriz[x][y] = src.bomba
             localBombas[localBombas.length] = [x, y]
             incrementarValores(matriz, x, y)
             qtdBombas--
@@ -176,16 +189,16 @@ function criarCampo(matriz, qtdBombas){
 
 function incrementarValores(matriz, l, c){
 
-    if(!isNaN(matriz[l][c-1])) matriz[l][c-1]++
-    if(!isNaN(matriz[l][c+1])) matriz[l][c+1]++
+    if(Number.isInteger(matriz[l][c-1])) matriz[l][c-1]++
+    if(Number.isInteger(matriz[l][c+1])) matriz[l][c+1]++
 
-    if(matriz[l-1] != undefined && !isNaN(matriz[l-1][c  ])) matriz[l-1][c  ]++
-    if(matriz[l-1] != undefined && !isNaN(matriz[l-1][c-1])) matriz[l-1][c-1]++
-    if(matriz[l-1] != undefined && !isNaN(matriz[l-1][c+1])) matriz[l-1][c+1]++
+    if(matriz[l-1] != undefined && Number.isInteger(matriz[l-1][c  ])) matriz[l-1][c  ]++
+    if(matriz[l-1] != undefined && Number.isInteger(matriz[l-1][c-1])) matriz[l-1][c-1]++
+    if(matriz[l-1] != undefined && Number.isInteger(matriz[l-1][c+1])) matriz[l-1][c+1]++
 
-    if(matriz[l+1] != undefined && !isNaN(matriz[l+1][c  ])) matriz[l+1][c  ]++
-    if(matriz[l+1] != undefined && !isNaN(matriz[l+1][c-1])) matriz[l+1][c-1]++
-    if(matriz[l+1] != undefined && !isNaN(matriz[l+1][c+1])) matriz[l+1][c+1]++
+    if(matriz[l+1] != undefined && Number.isInteger(matriz[l+1][c  ])) matriz[l+1][c  ]++
+    if(matriz[l+1] != undefined && Number.isInteger(matriz[l+1][c-1])) matriz[l+1][c-1]++
+    if(matriz[l+1] != undefined && Number.isInteger(matriz[l+1][c+1])) matriz[l+1][c+1]++
 }
 
 function criarCampoHTML(matriz){
@@ -217,8 +230,7 @@ function AbrirEspaçosVazios(matriz, l, c){
     }
 
     if(matriz[l][c] != 0) {
-        e.textContent = matriz[l][c]
-        e.style.color = coloraçãoNumeros[parseInt(matriz[l][c])-1] 
+        mostarNumero(e, matriz[l][c])
         matriz[l][c] = undefined
         return
     }
@@ -237,8 +249,8 @@ function AbrirEspaçosVazios(matriz, l, c){
 function jogoPerdido(localBombas){
 
     boolJogando = false
-    elemento.resultadoJogo[0].textContent = "Você Perdeu"
-    elemento.areaCampoMinado.style = "animation: shake 0.4s"
+    elemento.resultadoJogo[0].textContent = src.txtPerdeu
+    elemento.areaCampoMinado.style.animation = src.shakeAnimation
     let i = 0
 
     setInterval(function(){
@@ -247,20 +259,17 @@ function jogoPerdido(localBombas){
             //Interromper 
             document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
                 element.onclick = (e) => {
-                    for(; i < localBombas.length-1; i++){
-                        
-                        let [x, y] = localBombas[i]
-                        mostrarBomba(x, y)
-                    }
+                    
+                    while(i < localBombas.length-1) mostrarBomba(localBombas[i++])
                 }
             })
             
-            let [x, y] = localBombas[i++]
-            mostrarBomba(x, y)
-        }
-        else if (i++ == localBombas.length) {
-            setVisibilidadeTela(elemento.resultadoJogo, "flex")
-            elemento.container.style.filter = "brightness(37%)"
+            mostrarBomba(localBombas[i++])
+
+            if(i == localBombas.length){
+                setVisibilidadeTela(elemento.resultadoJogo, "flex")
+                elemento.container.style.filter = src.escurecer
+            }
         }
 
     }, 120-(localBombas.length));
@@ -270,22 +279,23 @@ function verificarVitoria(){
     if(camposOcultos == elemento.inputMinas.value && elemento.lableBandeiras.textContent == 0){
         boolJogando = false
 
-        elemento.resultadoJogo[0].textContent = "Você Ganhou"
+        elemento.resultadoJogo[0].textContent = src.txtGanhou
         setVisibilidadeTela(elemento.resultadoJogo, "flex")
+        elemento.container.style.filter = src.escurecer
     }
 }
 
-function mostrarBomba(x, y){
+function mostrarBomba([x, y]){
     let e = document.querySelector('div[data-linha="' + (x) + '"][data-coluna="' + (y) + '"]');
-    e.textContent = "*"
+    e.textContent = src.bomba
 }
 
 function reiniciarJogo(){
 
     for(lable of elemento.lableTempo) lable.textContent = 0
-    elemento.container.style.filter = "brightness(100%)"
-    elemento.areaCampoMinado.style = "animation: none"
-    tempoMaximo = false
+    elemento.areaCampoMinado.style.animation = "none"
+    elemento.container.style.filter = "none"
+    boolTempoMaximo = false
 
     setVisibilidadeTela(elemento.tela2, "none")
     setVisibilidadeTela(elemento.tela1, "flex")
