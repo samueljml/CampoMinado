@@ -39,13 +39,18 @@ p{
     font-weight: bold;
 }
 input{
-    width: 35px;
+    width: 40px;
+    height: 20px;
+    margin-left: 5px;
     background: rgb(138, 195, 183);
 }
 #Proporção > input{
     width: 35px;
-    margin-left: 6px;
-    margin-right: 6px;
+    margin-left: 11px;
+    margin-right: 11px;
+}
+#Proporção > #largura{
+    margin-right: 0px;
 }
 input[type=number]::-webkit-inner-spin-button { 
     cursor: pointer;

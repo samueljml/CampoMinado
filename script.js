@@ -49,7 +49,7 @@ document.querySelectorAll(".container p input").forEach((element) => {
     element.onchange = (e) => {
 
         if(e.target.value < 3) e.target.value = 3;
-        else if(e.target.value > 10) e.target.value = 10;
+        else if(e.target.value > 15) e.target.value = 15;
         
         if(elemento.inputMinas.value > elemento.inputLinhas.value * elemento.inputColunas.value){
             elemento.inputMinas.value = elemento.inputLinhas.value * elemento.inputColunas.value - 1
