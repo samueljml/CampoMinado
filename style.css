@@ -4,122 +4,159 @@ html, body {
     margin: 0px;
 }
 body{
-    user-select: none;
-    background: gray;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    flex-direction: column;
     justify-content: center;
+    background: gray;
+    user-select: none;
 }
 div{
-    padding: 0px;
     margin: 0px;
+    padding: 0px;
 }
 .container{
     display: flex;
+    flex-flow: column wrap;
     align-items: center;
-    flex-direction: column;
+    justify-content: space-around;
+    width: 285px;
+    height: 300px;
+    padding: 20px;
+    border-radius: 5px;
+    border: 5px solid #000;
+    background: rgb(29, 124, 103);    
+}
+.CampoMinado{
+    display: none;
+    flex-flow: row wrap;
+    align-items: center;
     justify-content: space-around;
     width: auto;
     height: auto;
     border-radius: 5px;
     border: 5px solid #000;
-    background: rgb(29, 124, 103);    
+    background: rgb(29, 124, 103);  
+}
+.campoEscurecido{
+    transition: 0;
+    filter: brightness(37%);
+}
+.campoAberto{
+    background: rgb(103, 139, 131) !important;
+}
+.enable{
+    display: flex !important;
+}
+.disable{
+    display: none;
+}
+.bandeira{
+    content: url("assets/imgs/flag.png");
+}
+.bomba{
+    background: rgb(177, 59, 49);
+}
+.tremer{
+    animation: shake 0.4s;
+    transition: all 3s;
 }
 h1{
-    font-family:  'Segoe UI';
+    display: flex;
     margin-block-end: 0px;
-    margin: 18px;
-    margin-bottom: 12px;
-    font-size: 27pt;
+    margin-block-start: 0px;
+    font-size: 29.5pt;
+    font-family:  'Segoe UI';
 }
 p{
-    font-family:  'Segoe UI';
     font-size: 15pt;
+    font-family:  'Segoe UI';
     font-weight: bold;
 }
 input{
-    width: 40px;
-    height: 20px;
-    margin-left: 5px;
-    background: rgb(138, 195, 183);
+    width: 95%;
+    height: 30px;
+    padding: 0%;
+    border-width: 0px;
+    font-size: 15pt;
+    background: rgb(29, 124, 103);
+    filter: brightness(80%);
 }
-#Proporção > input{
-    width: 35px;
-    margin-left: 11px;
-    margin-right: 11px;
+.proporcao{
+    justify-content: space-between;
+    width: 95%;
+    font-size: 20pt;
 }
-#Proporção > #largura{
-    margin-right: 0px;
+.proporcao > input{
+    width: 45%;
 }
 input[type=number]::-webkit-inner-spin-button { 
     cursor: pointer;
 }
 button{
-    cursor: pointer;
+    justify-content: center;
+    width: 95%;
+    height: 60px;
     border: none;
     border-radius: 15px;
     box-shadow: 0 9px gray;
-    margin-top: 25px;
-    margin-bottom: 30px;
-    width: 248px;
-    height: 60px;
     font-size: 14pt;
     align-items: center;
-    justify-content: center;
+    cursor: pointer;
 }
 button:hover {
-    background-color: rgb(141, 141, 141);
     box-shadow: 0 9px black;
+    background-color: rgb(141, 141, 141);
 }
 button:focus { outline-style: none; }
 .container > div{
     display: flex;
 }
 .campo{
-    user-select: none;
     width: 32px;
     height: 32px;
-    font-size: 16pt;
     padding-top: 3px;
-    text-align: center;
-    font-family: mineFont;
     border: 1px solid black;
-}
-.tela2{
-    display: none;
+    font-size: 16pt;
+    font-family: mineFont;
+    text-align: center;
+    user-select: none;
 }
 #labelQtdBandeiras, #labelTempo{
-    font-family:  'Segoe UI';
-    font-size: 30pt;
     margin-bottom: 3px;
+    font-size: 30pt;
+    font-family:  'Segoe UI';
 }
 #statusJogo{
     display: none;
-    background: rgb(29, 124, 103);
-    border: 5px solid black;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;
-    flex-wrap: wrap;
-    width: 220px;
+    width: 215px;
     height: auto;
-    padding: 5px;
-    padding-top: 0px;
-    padding-bottom: 0px;
     margin-bottom: 10px;
+    padding: 0 8px 0 8px;
     border-radius: 15px;
+    border: 5px solid black;
+    background: rgb(29, 124, 103);
 }
-#resultadoJogo{
-    font-size: 27pt;
+.resultadoJogo{
     display: none;
+    font-size: 27pt;
     font-weight: bold;
 }
 #statusJogo > button{
     width: 205px;
     height: 50px;
-    margin-bottom: 20px;
-    margin-top: 5px;
+    margin: 5px 0 20px 0;
     font-size: 20pt;
+}
+.shakeAnimation{
+    animation: "shake 0.4s";
+}
+img{
+    width: 34px;
+    height: 34px;
 }
 @font-face {
     font-family: "mineFont";

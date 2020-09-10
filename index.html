@@ -6,29 +6,30 @@
 </head>
 <body>
 
-    <div class="tela2" id="statusJogo">
-        <img class="tela2" src="assets/imgs/flag.png" width="34px" height="34px">
-        <div class="tela2" id="labelQtdBandeiras"></div>
-        <img class="tela2" src="assets/imgs/clock.png" width="34px" height="34px">
-        <div class="tela2" id="labelTempo">
-            <div class="tela2">0</div><br>
-            <div class="tela2">0</div><br>
-            <div class="tela2">0</div><br>
-        </div>
+    <div id="statusJogo" class="telasJogo">
+        <img src="assets/imgs/flag.png" alt="Icone flag">
+        <div id="labelQtdBandeiras"></div>
+        <img src="assets/imgs/clock.png" alt="Icone relógio">
+        <div id="labelTempo"></div>
         
-        <div id="resultadoJogo"></div>
-        <button id="resultadoJogo" onclick="reiniciarJogo()">Voltar</button>
+        <div class="resultadoJogo"></div>
+        <button class="resultadoJogo" onclick="reiniciarJogo()">Voltar</button>
     </div>
 
     <div class="container">
-        <h1 class="tela1">Campo Minado</h1>
-        <p class="tela1">Numero de bombas: <input id="minas" type="number" class="item" value="15"/></p>
-        <p class="tela1" id="Proporção">Proporção: <input id="altura" type="number" class="item" value="10"/> <strong>x</strong> <input id="largura" type="number" class="item" value="10"/></p>
-        <button class="tela1" onclick="iniciarJogo()">Começar</button>
-        
-        <div class="tela2" id="areaCampo">
+        <h1>Campo Minado</h1>
+
+        <input id="qtdBombas" type="number" class="item" value="15"/>
+
+        <div class="proporcao">
+            <input id="altura" type="number" class="item" value="10"/>x
+            <input id="largura" type="number" class="item" value="10"/>
         </div>
+         
+        <button onclick="iniciarJogo()">Começar</button>
     </div>
+
+    <div id="areaCampo" class="CampoMinado telasJogo"></div>
 
     </div><script type="text/javascript" src="script.js"></script>
 </body>

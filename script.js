@@ -1,51 +1,40 @@
-let boolJogando = false
-let boolTempoMaximo = false
-let camposOcultos = 0
+let boolJogando = false,
+    camposOcultos = 0,
+    tempoDeJogo = 0;
 
-let elemento = {
-    inputMinas: document.getElementById("minas"),
-    inputLinhas: document.getElementById("largura"),
-    inputColunas: document.getElementById("altura"),
-    tela1: document.getElementsByClassName("tela1"),
-    tela2: document.getElementsByClassName("tela2"),
+const elemento = {
+    inputMinas: document.getElementById("qtdBombas"),
+    inputLinhas: document.getElementById("altura"),
+    inputColunas: document.getElementById("largura"),
+    Linhas_e_colunas: document.querySelectorAll(".proporcao"),
+    telasJogo: document.getElementsByClassName("telasJogo"),
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
-    lableTempo: document.querySelectorAll("#labelTempo>div"),
+    lableTempo: document.getElementById("labelTempo"),
     container: document.getElementsByClassName("container")[0],
-    lableBandeiras: document.getElementById("labelQtdBandeiras"),
-    resultadoJogo: document.querySelectorAll("#statusJogo>#resultadoJogo")
+    qtdBandeiras: document.getElementById("labelQtdBandeiras"),
+    resultadoJogo: document.querySelectorAll("#statusJogo>.resultadoJogo")
 }
 
-let src = {
+const text = {
     bomba: "*",
-    txtPerdeu: 'Você Perdeu',
-    txtGanhou: 'Você Ganhou',
-    escurecer: 'brightness(37%)',
-    shakeAnimation: "shake 0.4s",
-    backgroundBomba: 'rgb(177, 59, 49)',
-    imgBandeira: 'url("assets/imgs/flag.png")',
-    backgroundCampoAberto: 'rgb(103, 139, 131)'
+    perdeu: 'Você Perdeu',
+    ganhou: 'Você Ganhou'
 }
 
-let coloraçãoNumeros = [
+const coloraçãoNumeros = [
     "blue",
     "green",
     "red",
     "purple",
     "maroon",
-    "#003838",
+    "#044",
     "black",
     "midnightblue"
 ]
 
-let tempo = {
-    unidade: elemento.lableTempo[2],
-    dezena: elemento.lableTempo[1],
-    centena: elemento.lableTempo[0]
-}
-
 //Limitação dos valores do input (linha e coluna)
-document.querySelectorAll(".container p input").forEach((element) => {
+elemento.Linhas_e_colunas.forEach((element) => {
     element.onchange = (e) => {
 
         if(e.target.value < 3) e.target.value = 3;
@@ -58,7 +47,7 @@ document.querySelectorAll(".container p input").forEach((element) => {
 });
 
 //Limitação do valor do input (Quantidade de bombas)
-elemento.inputMinas.onchange= (e) => {   
+elemento.inputMinas.onchange = (e) => {   
     let l = elemento.inputLinhas.value
     let c = elemento.inputColunas.value
 
@@ -68,45 +57,36 @@ elemento.inputMinas.onchange= (e) => {
 
 //Atualiza tempo de jogo
 setInterval(function(){
-    if(boolJogando && !boolTempoMaximo){
-        
-        if(++tempo.unidade.textContent == 10){
-            tempo.unidade.textContent = 0
 
-            if(++tempo.dezena.textContent == 10) {
-                tempo.dezena.textContent = 0
-                tempo.centena.textContent++
-            }
-        }
-        if(tempo.unidade.textContent == 9 && tempo.dezena.textContent == 9 && tempo.centena.textContent == 9) boolTempoMaximo = true
-    } 
+    if(boolJogando && tempoDeJogo++ < 999) elemento.lableTempo.textContent = ("000" + tempoDeJogo).slice(-3);
 }, 1000);
 
 var matriz = []
 
 function iniciarJogo(){
 
-    setVisibilidadeTela(elemento.tela1, "none")
-    setVisibilidadeTela(elemento.tela2, "flex")
-
+    //Define os atributos iniciais
     boolJogando = true
-    elemento.lableBandeiras.textContent = elemento.inputMinas.value
+    elemento.lableTempo.textContent = "000"
+    elemento.qtdBandeiras.textContent = elemento.inputMinas.value
     camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
 
+    for(e of elemento.telasJogo) e.classList.add("enable")
+    trocarClasse(elemento.container, "container", "disable")
+
     for(l=0; l<elemento.inputLinhas.value; l++){
+
         matriz[l] = []
-        for(c=0; c<elemento.inputColunas.value; c++){
-            matriz[l][c] = 0
-        }
+        for(c=0; c<elemento.inputColunas.value; c++) matriz[l][c] = 0
     }
     
     // Insere as minas e os numeros na matriz e retorna as coordenas das bombas
-    let localBombas = criarCampo(matriz, parseInt(elemento.inputMinas.value))
+    let localBombas = criarCampo(matriz)
 
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
 
     // Click do mouse nos campos
-    document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
+    document.querySelectorAll('.campo').forEach((element) => {
         element.onclick = (e) => {
 
             if(!boolJogando || !campoDisponivel(e.target)) return
@@ -114,17 +94,13 @@ function iniciarJogo(){
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
 
-            if(matriz[l][c] == src.bomba){
-                e.target.textContent = src.bomba
-                e.target.style.background = src.backgroundBomba
-                jogoPerdido(localBombas)
-            }
+            if(matriz[l][c] == text.bomba) jogoPerdido(e.target, localBombas)            
             else if(matriz[l][c] == 0) AbrirEspaçosVazios(matriz, l, c)
             else{
+                
                 mostarNumero(e.target, matriz[l][c])
                 matriz[l][c] = undefined
                 camposOcultos--
-
                 verificarVitoria()
             }
             
@@ -132,53 +108,52 @@ function iniciarJogo(){
         element.oncontextmenu = (e) => {
 
             e.preventDefault();
+            if(!boolJogando) return            
 
-            if(!boolJogando) return
+            if(campoDisponivel(e.target) && elemento.qtdBandeiras.textContent > 0){
 
-            if(campoDisponivel(e.target)){
-                if(elemento.lableBandeiras.textContent > 0){
-                    e.target.style.content = src.imgBandeira
-                    elemento.lableBandeiras.textContent--
-
-                    verificarVitoria(camposOcultos)
-                }
+                e.target.classList.add("bandeira")
+                elemento.qtdBandeiras.textContent--
+                verificarVitoria()
             }
-            else if(e.target.style.content == src.imgBandeira){
-                e.target.style.content = ''
-                elemento.lableBandeiras.textContent++
+            else if(e.target.classList.contains("bandeira")){
+                
+                e.target.classList.remove("bandeira")
+                elemento.qtdBandeiras.textContent++
             }  
         }
     })
 }
 
+function trocarClasse(elementoAlvo, classeAntiga, classeNova){
+
+    elementoAlvo.classList.remove(classeAntiga)
+    elementoAlvo.classList.add(classeNova)
+}
+
 function campoDisponivel(campo){
-    if(campo.textContent == '' && campo.style.background != src.backgroundCampoAberto && campo.style.content != src. imgBandeira) return true
+
+    if(campo.textContent == '' && !campo.classList.contains("campoAberto") && !campo.classList.contains("bandeira")) return true
     return false
 }
 
 function mostarNumero(e, numero){
     e.textContent = numero
-    e.style.background = src.backgroundCampoAberto
+    e.classList.add("campoAberto")
     e.style.color = coloraçãoNumeros[parseInt(numero)-1]
 }
 
-function setVisibilidadeTela(tela, visibilidade){
+function criarCampo(matriz){
 
-    for(i=0; i<tela.length; i++){
-        tela[i].style.display = visibilidade
-    }
-}
-
-function criarCampo(matriz, qtdBombas){
-
+    let qtdBombas = parseInt(elemento.inputMinas.value)
     let localBombas = []
 
     while(qtdBombas > 0){
         let x = Math.round(Math.random() * (elemento.inputLinhas.value-1))
         let y = Math.round(Math.random() * (elemento.inputColunas.value-1))
 
-        if(matriz[x][y] != src.bomba){
-            matriz[x][y] = src.bomba
+        if(matriz[x][y] != text.bomba){
+            matriz[x][y] = text.bomba
             localBombas[localBombas.length] = [x, y]
             incrementarValores(matriz, x, y)
             qtdBombas--
@@ -202,6 +177,7 @@ function incrementarValores(matriz, l, c){
 }
 
 function criarCampoHTML(matriz){
+
     let htmlFinal = ''
     
     matriz.forEach((linhas) => {
@@ -221,15 +197,15 @@ function AbrirEspaçosVazios(matriz, l, c){
     if(matriz[l] == undefined || matriz[l][c] == undefined) return
     
     let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
-    e.style.background = src.backgroundCampoAberto
+    e.classList.add("campoAberto")
     camposOcultos--
 
-    if(e.style.content == src.imgBandeira) {
-        e.style.content = ''
-        elemento.lableBandeiras.textContent++
+    if(e.classList.contains("bandeira")) {
+        e.classList.remove("bandeira")
+        elemento.qtdBandeiras.textContent++
     }
 
-    if(matriz[l][c] != 0) {
+    if(matriz[l][c] > 0) {
         mostarNumero(e, matriz[l][c])
         matriz[l][c] = undefined
         return
@@ -246,15 +222,20 @@ function AbrirEspaçosVazios(matriz, l, c){
     AbrirEspaçosVazios(matriz, l+1, c+1)
 }
 
-function jogoPerdido(localBombas){
+function jogoPerdido(campo, localBombas){
 
+    campo.classList.add("bomba")
+    campo.textContent = text.bomba
     boolJogando = false
-    elemento.resultadoJogo[0].textContent = src.txtPerdeu
-    elemento.areaCampoMinado.style.animation = src.shakeAnimation
+    
+    elemento.areaCampoMinado.classList.add("tremer")
+    elemento.resultadoJogo[0].textContent = text.perdeu
     let i = 0
 
     setInterval(function(){
         if(i < localBombas.length) {
+
+            elemento.areaCampoMinado.classList.add("campoEscurecido")
 
             //Interromper 
             document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
@@ -267,8 +248,8 @@ function jogoPerdido(localBombas){
             mostrarBomba(localBombas[i++])
 
             if(i == localBombas.length){
-                setVisibilidadeTela(elemento.resultadoJogo, "flex")
-                elemento.container.style.filter = src.escurecer
+                
+                for(e of elemento.resultadoJogo) e.classList.add("enable")
             }
         }
 
@@ -276,28 +257,28 @@ function jogoPerdido(localBombas){
 }
 
 function verificarVitoria(){
-    if(camposOcultos == elemento.inputMinas.value && elemento.lableBandeiras.textContent == 0){
+    if(camposOcultos == elemento.inputMinas.value && elemento.qtdBandeiras.textContent == 0){
         boolJogando = false
 
-        elemento.resultadoJogo[0].textContent = src.txtGanhou
-        setVisibilidadeTela(elemento.resultadoJogo, "flex")
-        elemento.container.style.filter = src.escurecer
+        elemento.resultadoJogo[0].textContent = text.ganhou
+        for(e of elemento.resultadoJogo) e.classList.add("enable")
+        elemento.areaCampoMinado.classList.add("campoEscurecido")
     }
 }
 
 function mostrarBomba([x, y]){
-    let e = document.querySelector('div[data-linha="' + (x) + '"][data-coluna="' + (y) + '"]');
-    e.textContent = src.bomba
+    document.querySelector('div[data-linha="' + (x) + '"][data-coluna="' + (y) + '"]').textContent = text.bomba;
 }
 
 function reiniciarJogo(){
 
-    for(lable of elemento.lableTempo) lable.textContent = 0
-    elemento.areaCampoMinado.style.animation = "none"
-    elemento.container.style.filter = "none"
+    tempoDeJogo = 0
     boolTempoMaximo = false
 
-    setVisibilidadeTela(elemento.tela2, "none")
-    setVisibilidadeTela(elemento.tela1, "flex")
-    setVisibilidadeTela(elemento.resultadoJogo, "none")
+    for(e of elemento.resultadoJogo) e.classList.remove("enable")
+    for(e of elemento.telasJogo) e.classList.remove("enable")
+
+    trocarClasse(elemento.container, "disable", "container")
+    elemento.areaCampoMinado.classList.remove("campoEscurecido", "tremer")
+
 }
