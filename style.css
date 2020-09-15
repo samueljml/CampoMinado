@@ -43,7 +43,13 @@ div{
     filter: brightness(37%);
 }
 .campoAberto{
-    background: rgb(103, 139, 131) !important;
+    background: rgb(136, 158, 154) !important;
+}
+.campoAberto2{
+    background: rgb(108, 135, 128) !important;
+}
+.campoFechado{
+    background: rgb(26, 110, 92) !important;
 }
 .enable{
     display: flex !important;

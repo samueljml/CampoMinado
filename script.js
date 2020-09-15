@@ -84,6 +84,7 @@ function iniciarJogo(){
     let localBombas = criarCampo(matriz)
 
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
+    tornarCampoListrado(elemento.inputLinhas.value, elemento.inputColunas.value)
 
     // Click do mouse nos campos
     document.querySelectorAll('.campo').forEach((element) => {
@@ -98,7 +99,8 @@ function iniciarJogo(){
             else if(matriz[l][c] == 0) AbrirEspaçosVazios(matriz, l, c)
             else{
                 
-                mostarNumero(e.target, matriz[l][c])
+                mostrarNumero(e.target, matriz[l][c])
+                trocarFundo(e.target, l+c)
                 matriz[l][c] = undefined
                 camposOcultos--
                 verificarVitoria()
@@ -125,6 +127,14 @@ function iniciarJogo(){
     })
 }
 
+function tornarCampoListrado(linhas, colunas){
+    for(let l = 0; l < linhas; l++){
+        for(let c = 0; c < colunas; c++){
+            if((l+c)%2) document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]').classList.add("campoFechado")
+        }
+    }
+}
+
 function trocarClasse(elementoAlvo, classeAntiga, classeNova){
 
     elementoAlvo.classList.remove(classeAntiga)
@@ -137,9 +147,13 @@ function campoDisponivel(campo){
     return false
 }
 
-function mostarNumero(e, numero){
+function trocarFundo(element, somaLinhaColuna){
+    if(somaLinhaColuna%2) trocarClasse(element, "campoFechado", "campoAberto2")
+    else element.classList.add("campoAberto")
+}
+
+function mostrarNumero(e, numero, soma){
     e.textContent = numero
-    e.classList.add("campoAberto")
     e.style.color = coloraçãoNumeros[parseInt(numero)-1]
 }
 
@@ -197,7 +211,8 @@ function AbrirEspaçosVazios(matriz, l, c){
     if(matriz[l] == undefined || matriz[l][c] == undefined) return
     
     let e = document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]');
-    e.classList.add("campoAberto")
+    
+    trocarFundo(e, l+c)
     camposOcultos--
 
     if(e.classList.contains("bandeira")) {
@@ -206,7 +221,8 @@ function AbrirEspaçosVazios(matriz, l, c){
     }
 
     if(matriz[l][c] > 0) {
-        mostarNumero(e, matriz[l][c])
+        mostrarNumero(e, matriz[l][c])
+        trocarFundo(e, l+c)
         matriz[l][c] = undefined
         return
     }
@@ -224,7 +240,8 @@ function AbrirEspaçosVazios(matriz, l, c){
 
 function jogoPerdido(campo, localBombas){
 
-    campo.classList.add("bomba")
+    if(campo.classList.contains("campoFechado")) trocarClasse(campo, "campoFechado", "bomba")
+    else campo.classList.add("bomba")
     campo.textContent = text.bomba
     boolJogando = false
     
