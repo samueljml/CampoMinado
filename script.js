@@ -81,9 +81,10 @@ function iniciarJogo(){
     
     // Insere as minas e os numeros na matriz e retorna as coordenas das bombas
     let localBombas = criarCampo(matriz)
-
+    
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
-    //elemento.statusJogo.style.marginBottom = elemento.areaCampoMinado.offsetHeight.toString() + 'px'
+    elemento.statusJogo.classList.add('enable')
+    elemento.areaCampoMinado.classList.add('enable')
 
     // Click do mouse nos campos
     document.querySelectorAll('.campo').forEach((element) => {
@@ -183,8 +184,6 @@ function incrementarValores(matriz, l, c){
 }
 
 function criarCampoHTML(matriz){
-    console.log(matriz)
-
     let htmlFinal = '<div class="fundo"></div>'
 
     let fundoNormal = true;
@@ -304,5 +303,7 @@ function reiniciarJogo(){
     for(e of resultadoJogo) e.classList.remove("enable")
     trocarClasse(elemento.telaConfiguracao, "disable", "telaConfiguracao")
     elemento.areaCampoMinado.classList.remove("campoEscurecido", "tremer")
+    elemento.areaCampoMinado.classList.remove("enable")
+    elemento.statusJogo.classList.remove("enable")
 
 }
