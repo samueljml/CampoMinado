@@ -8,7 +8,6 @@ const elemento = {
     inputLinhas: document.getElementById("altura"),
     inputColunas: document.getElementById("largura"),
     Linhas_e_colunas: document.querySelectorAll(".proporcao"),
-    telasJogo: document.getElementsByClassName("telasJogo"),
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableTempo: document.getElementById("labelTempo"),
@@ -16,7 +15,6 @@ const elemento = {
     qtdBandeiras: document.getElementById("labelQtdBandeiras"),
     resultadoJogo: document.querySelectorAll(".resultadoJogo"),
     fundoResultado: document.getElementsByClassName("fundoResultado")[0]
-    
 }
 
 const text = {
@@ -73,7 +71,6 @@ function iniciarJogo(){
     elemento.qtdBandeiras.textContent = elemento.inputMinas.value
     camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
 
-    for(e of elemento.telasJogo) e.classList.add("enable")
     trocarClasse(elemento.telaConfiguracao, "telaConfiguracao", "disable")
 
     for(l=0; l<elemento.inputLinhas.value; l++){
@@ -305,7 +302,6 @@ function reiniciarJogo(){
 
     elemento.fundoResultado.style.display = 'none'
     for(e of resultadoJogo) e.classList.remove("enable")
-    for(e of elemento.telasJogo) e.classList.remove("enable")
     trocarClasse(elemento.telaConfiguracao, "disable", "telaConfiguracao")
     elemento.areaCampoMinado.classList.remove("campoEscurecido", "tremer")
 
