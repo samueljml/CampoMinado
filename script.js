@@ -1,6 +1,7 @@
 let boolJogando = false,
     camposOcultos = 0,
-    tempoDeJogo = 0;
+    tempoDeJogo = 0
+    matriz = [];
 
 const elemento = {
     inputMinas: document.getElementById("qtdBombas"),
@@ -11,9 +12,11 @@ const elemento = {
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableTempo: document.getElementById("labelTempo"),
-    container: document.getElementsByClassName("container")[0],
+    telaConfiguracao: document.getElementsByClassName("telaConfiguracao")[0],
     qtdBandeiras: document.getElementById("labelQtdBandeiras"),
-    resultadoJogo: document.querySelectorAll("#statusJogo>.resultadoJogo")
+    resultadoJogo: document.querySelectorAll(".resultadoJogo"),
+    fundoResultado: document.getElementsByClassName("fundoResultado")[0]
+    
 }
 
 const text = {
@@ -22,7 +25,7 @@ const text = {
     ganhou: 'Você Ganhou'
 }
 
-const coloraçãoNumeros = [
+const coloracaoNumeros = [
     "blue",
     "green",
     "red",
@@ -37,7 +40,7 @@ const coloraçãoNumeros = [
 elemento.Linhas_e_colunas.forEach((element) => {
     element.onchange = (e) => {
 
-        if(e.target.value < 3) e.target.value = 3;
+        if(e.target.value < 5) e.target.value = 5;
         else if(e.target.value > 15) e.target.value = 15;
         
         if(elemento.inputMinas.value > elemento.inputLinhas.value * elemento.inputColunas.value){
@@ -61,18 +64,17 @@ setInterval(function(){
     if(boolJogando && tempoDeJogo++ < 999) elemento.lableTempo.textContent = ("000" + tempoDeJogo).slice(-3);
 }, 1000);
 
-var matriz = []
-
 function iniciarJogo(){
 
     //Define os atributos iniciais
     boolJogando = true
+    matriz = []
     elemento.lableTempo.textContent = "000"
     elemento.qtdBandeiras.textContent = elemento.inputMinas.value
     camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
 
     for(e of elemento.telasJogo) e.classList.add("enable")
-    trocarClasse(elemento.container, "container", "disable")
+    trocarClasse(elemento.telaConfiguracao, "telaConfiguracao", "disable")
 
     for(l=0; l<elemento.inputLinhas.value; l++){
 
@@ -84,7 +86,7 @@ function iniciarJogo(){
     let localBombas = criarCampo(matriz)
 
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
-    tornarCampoListrado(elemento.inputLinhas.value, elemento.inputColunas.value)
+    //elemento.statusJogo.style.marginBottom = elemento.areaCampoMinado.offsetHeight.toString() + 'px'
 
     // Click do mouse nos campos
     document.querySelectorAll('.campo').forEach((element) => {
@@ -96,7 +98,7 @@ function iniciarJogo(){
             var c = parseInt(e.target.dataset.coluna)
 
             if(matriz[l][c] == text.bomba) jogoPerdido(e.target, localBombas)            
-            else if(matriz[l][c] == 0) AbrirEspaçosVazios(matriz, l, c)
+            else if(matriz[l][c] == 0) AbrirEspacosVazios(matriz, l, c)
             else{
                 
                 mostrarNumero(e.target, matriz[l][c])
@@ -105,7 +107,6 @@ function iniciarJogo(){
                 camposOcultos--
                 verificarVitoria()
             }
-            
         }
         element.oncontextmenu = (e) => {
 
@@ -127,14 +128,6 @@ function iniciarJogo(){
     })
 }
 
-function tornarCampoListrado(linhas, colunas){
-    for(let l = 0; l < linhas; l++){
-        for(let c = 0; c < colunas; c++){
-            if((l+c)%2) document.querySelector('div[data-linha="' + (l) + '"][data-coluna="' + (c) + '"]').classList.add("campoFechado")
-        }
-    }
-}
-
 function trocarClasse(elementoAlvo, classeAntiga, classeNova){
 
     elementoAlvo.classList.remove(classeAntiga)
@@ -143,18 +136,20 @@ function trocarClasse(elementoAlvo, classeAntiga, classeNova){
 
 function campoDisponivel(campo){
 
-    if(campo.textContent == '' && !campo.classList.contains("campoAberto") && !campo.classList.contains("bandeira")) return true
+    if(campo.classList.contains("campoFechado") && !campo.classList.contains("bandeira")) return true
     return false
 }
 
 function trocarFundo(element, somaLinhaColuna){
-    if(somaLinhaColuna%2) trocarClasse(element, "campoFechado", "campoAberto2")
-    else element.classList.add("campoAberto")
+
+    trocarClasse(element, "campoFechado", "campoAberto")
+    if(somaLinhaColuna%2) trocarClasse(element, "campoFechadoEscuro", "campoAbertoEscuro")
 }
 
 function mostrarNumero(e, numero, soma){
+
     e.textContent = numero
-    e.style.color = coloraçãoNumeros[parseInt(numero)-1]
+    e.style.color = coloracaoNumeros[parseInt(numero)-1]
 }
 
 function criarCampo(matriz){
@@ -191,22 +186,32 @@ function incrementarValores(matriz, l, c){
 }
 
 function criarCampoHTML(matriz){
+    console.log(matriz)
 
-    let htmlFinal = ''
+    let htmlFinal = '<div class="fundo"></div>'
+
+    let fundoNormal = true;
     
     matriz.forEach((linhas) => {
-        
+   
         htmlFinal += '<div>'
+
         let i = 0;
         linhas.forEach((campo) => {
-            htmlFinal += '<div class="campo" data-linha="' + matriz.indexOf(linhas) + '" data-coluna="' + (i++) + '"></div>'
+
+            if(fundoNormal) htmlFinal += '<div class="campo campoFechado" data-linha="' + matriz.indexOf(linhas) + '" data-coluna="' + (i++) + '"></div>'
+            else htmlFinal += '<div class="campo campoFechado campoFechadoEscuro" data-linha="' + matriz.indexOf(linhas) + '" data-coluna="' + (i++) + '"></div>'
+            
+            fundoNormal = !fundoNormal
         })
+        if(linhas.length%2 == 0) fundoNormal = !fundoNormal
+
         htmlFinal += '</div>'
     })
     return htmlFinal
 }
 
-function AbrirEspaçosVazios(matriz, l, c){
+function AbrirEspacosVazios(matriz, l, c){
 
     if(matriz[l] == undefined || matriz[l][c] == undefined) return
     
@@ -228,62 +233,67 @@ function AbrirEspaçosVazios(matriz, l, c){
     }
     matriz[l][c] = undefined
 
-    AbrirEspaçosVazios(matriz, l, c-1)
-    AbrirEspaçosVazios(matriz, l, c+1)
-    AbrirEspaçosVazios(matriz, l-1, c)
-    AbrirEspaçosVazios(matriz, l+1, c)
-    AbrirEspaçosVazios(matriz, l-1, c-1)
-    AbrirEspaçosVazios(matriz, l-1, c+1)
-    AbrirEspaçosVazios(matriz, l+1, c-1)
-    AbrirEspaçosVazios(matriz, l+1, c+1)
+    AbrirEspacosVazios(matriz, l, c-1)
+    AbrirEspacosVazios(matriz, l, c+1)
+    AbrirEspacosVazios(matriz, l-1, c)
+    AbrirEspacosVazios(matriz, l+1, c)
+    AbrirEspacosVazios(matriz, l-1, c-1)
+    AbrirEspacosVazios(matriz, l-1, c+1)
+    AbrirEspacosVazios(matriz, l+1, c-1)
+    AbrirEspacosVazios(matriz, l+1, c+1)
 }
 
 function jogoPerdido(campo, localBombas){
 
-    if(campo.classList.contains("campoFechado")) trocarClasse(campo, "campoFechado", "bomba")
-    else campo.classList.add("bomba")
-    campo.textContent = text.bomba
     boolJogando = false
-    
-    elemento.areaCampoMinado.classList.add("tremer")
-    elemento.resultadoJogo[0].textContent = text.perdeu
     let i = 0
+
+    mostrarBomba(campo)
+    elemento.areaCampoMinado.classList.add("tremer")
 
     setInterval(function(){
         if(i < localBombas.length) {
-
-            elemento.areaCampoMinado.classList.add("campoEscurecido")
 
             //Interromper 
             document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
                 element.onclick = (e) => {
                     
-                    while(i < localBombas.length-1) mostrarBomba(localBombas[i++])
+                    while(i < localBombas.length-1) mostrarBombaDaPosicao(localBombas[i++])
                 }
             })
             
-            mostrarBomba(localBombas[i++])
+            mostrarBombaDaPosicao(localBombas[i++])
 
-            if(i == localBombas.length){
-                
-                for(e of elemento.resultadoJogo) e.classList.add("enable")
-            }
+            if(i == localBombas.length) jogoTerminou(text.perdeu)   
         }
 
-    }, 120-(localBombas.length));
+    }, 120-(localBombas.length/2));
+}
+
+function jogoTerminou(resultado){
+
+    elemento.resultadoJogo[0].textContent = resultado
+    document.getElementsByClassName("fundo")[0].classList.add("fundoEscurece")
+    elemento.fundoResultado.style.display = 'flex'
 }
 
 function verificarVitoria(){
     if(camposOcultos == elemento.inputMinas.value && elemento.qtdBandeiras.textContent == 0){
+        
         boolJogando = false
-
-        elemento.resultadoJogo[0].textContent = text.ganhou
-        for(e of elemento.resultadoJogo) e.classList.add("enable")
-        elemento.areaCampoMinado.classList.add("campoEscurecido")
+        jogoTerminou(text.ganhou)   
     }
 }
 
-function mostrarBomba([x, y]){
+function mostrarBomba(campo){
+
+    if(campo.classList.contains("campoFechadoEscuro")) trocarClasse(campo, "campoFechadoEscuro", "bomba")
+    else trocarClasse(campo, "campoFechado", "bomba")
+    campo.textContent = text.bomba
+}
+
+function mostrarBombaDaPosicao([x, y]){
+    
     document.querySelector('div[data-linha="' + (x) + '"][data-coluna="' + (y) + '"]').textContent = text.bomba;
 }
 
@@ -291,11 +301,12 @@ function reiniciarJogo(){
 
     tempoDeJogo = 0
     boolTempoMaximo = false
+    let resultadoJogo = document.querySelectorAll(".resultadoJogo")
 
-    for(e of elemento.resultadoJogo) e.classList.remove("enable")
+    elemento.fundoResultado.style.display = 'none'
+    for(e of resultadoJogo) e.classList.remove("enable")
     for(e of elemento.telasJogo) e.classList.remove("enable")
-
-    trocarClasse(elemento.container, "disable", "container")
+    trocarClasse(elemento.telaConfiguracao, "disable", "telaConfiguracao")
     elemento.areaCampoMinado.classList.remove("campoEscurecido", "tremer")
 
 }
