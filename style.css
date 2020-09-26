@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
 html, body{
     width: 100%;
     height: 100%;
@@ -15,6 +20,7 @@ body{
     display: none;
     align-items: center;
     justify-content: space-between;
+    align-self: center;
     width: 215px;
     height: auto;
     margin-bottom: 10px;
@@ -28,17 +34,21 @@ body{
     line-height: 36px;
     font-family: "Segoe UI";
 }
+#qtdBombas{
+    width: 253px;
+}
 img{
     width: 36px;
     height: 36px;
 }
-#fundoJogo{
+#telaJogo{
     display: flex;
     justify-content: center;
+    flex-direction: column;
     width: auto;
     height: auto;
 }
-.fundoResultado{
+#fundoResultado{
     position: absolute;
     z-index: 1;
     display: none;
@@ -52,7 +62,7 @@ img{
     border: 5px solid #000;
     background: rgb(29, 124, 103);
 }
-.telaConfiguracao {
+#telaConfiguracao {
     display: flex;
     flex-flow: column wrap;
     align-items: center;
@@ -64,22 +74,20 @@ img{
     border-radius: 5px;
     background: rgb(29, 124, 103);
 }
-.fundo {
+#fundoParaEscurecer {
     visibility: hidden;
     position: absolute;
-    left: 0;
-    top: 0;
+    opacity: 0;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     transition: opacity 0.6s;
 }
-.fundoEscurece {
-    opacity: 1;
-    visibility: visible;
+.fundoAtivo{
+    opacity: 1 !important;
+    visibility: visible !important;
 }
-.CampoMinado {
+#areaCampo{
     position: relative;
     display: none;
     flex-flow: row wrap;
@@ -96,10 +104,10 @@ img{
     filter: brightness(37%);
 }
 .campoAberto {
-    background: rgb(136, 158, 154);
+    background: rgb(177, 187, 185);
 }
 .campoAbertoEscuro {
-    background: rgb(108, 135, 128) !important;
+    background: rgb(149, 157, 155) !important;
 }
 .campoFechado {
     background: rgb(29, 124, 103);
@@ -107,11 +115,11 @@ img{
 .campoFechadoEscuro {
     background: rgb(26, 110, 92) !important;
 }
-.enable {
+.ativo {
     display: flex !important;
 }
-.disable {
-    display: none;
+.inativo {
+    display: none !important;
 }
 .bandeira {
     content: url("assets/imgs/flag.png");
@@ -130,7 +138,7 @@ h1 {
     font-size: 29.6pt;
     font-family: "Segoe UI";
 }
-.divisor {
+#divisor {
     align-self: center;
     padding: 0 10px;
     font-size: 20pt;
@@ -141,14 +149,15 @@ h1 {
 input {
     width: 100%;
     padding: 13px;
-    color: rgb(24, 24, 24);
+    color: #000;
     background: rgb(29, 124, 103);
     border: 3px solid black;
     border-radius: 3px;
     font-weight: bold;
     font-size: 16pt;
 }
-.proporcao{
+#proporcao{
+    display: flex;
     justify-content: space-between;
     width: 100%;
     font-size: 20pt;
@@ -190,12 +199,12 @@ button:focus {
     text-align: center;
     user-select: none;
 }
-.resultadoJogo {
+#mensagemResultado {
     display: block;
     font-size: 20pt;
     font-weight: bold;
 }
-.fundoResultado > button {
+#fundoResultado > button {
     width: 100%;
     height: 50px;
     margin: 0;

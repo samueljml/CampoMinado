@@ -7,38 +7,29 @@
 
     <body>
 
-        <div id="statusJogo" class="telasJogo">
-            <img src="assets/imgs/flag.png" alt="Icone flag">
-            <div id="labelQtdBandeiras"></div>
-            <img src="assets/imgs/clock.png" alt="Icone relógio">
-            <div id="labelTempo"></div>
-        </div>
-
-        <div id="fundoJogo">
-
-            <div class="fundoResultado">
-                <div class="resultadoJogo"></div>
-                <button class="resultadoJogo" onclick="reiniciarJogo()">Voltar</button>
-            </div>
-
-            <div id="areaCampo" class="CampoMinado telasJogo">
-            <div class="fundo"></div>
-        </div>
-
-        <div class="telaConfiguracao">
+        <div id="telaConfiguracao">
             <h1>Campo Minado</h1>
 
-            <div>
-                <input id="qtdBombas" type="number" class="item" value="15"/>
-            </div>
+            <input id="qtdBombas" type="number" class="item" value="15"/>
 
-            <div class="proporcao">
+            <div id="proporcao">
                 <input id="altura" type="number" class="item" value="10"/>
-                <div class="divisor">x</div>
+                <div id="divisor">x</div>
                 <input id="largura" type="number" class="item" value="10"/>
             </div>
             
             <button onclick="iniciarJogo()">Começar</button>
+        </div>
+        
+        <div id="telaJogo">
+            <div id="statusJogo" class="telasJogo">
+                <img src="assets/imgs/flag.png" alt="Icone flag">
+                <div id="labelQtdBandeiras"></div>
+                <img src="assets/imgs/clock.png" alt="Icone relógio">
+                <div id="labelTempo">000</div>
+            </div>
+
+            <div id="areaCampo"></div>
         </div>
 
         </div><script type="text/javascript" src="script.js"></script>

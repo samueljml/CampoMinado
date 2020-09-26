@@ -7,14 +7,12 @@ const elemento = {
     inputMinas: document.getElementById("qtdBombas"),
     inputLinhas: document.getElementById("altura"),
     inputColunas: document.getElementById("largura"),
-    Linhas_e_colunas: document.querySelectorAll(".proporcao"),
+    Linhas_e_colunas: document.querySelectorAll("#proporcao > input"),
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableTempo: document.getElementById("labelTempo"),
-    telaConfiguracao: document.getElementsByClassName("telaConfiguracao")[0],
-    qtdBandeiras: document.getElementById("labelQtdBandeiras"),
-    resultadoJogo: document.querySelectorAll(".resultadoJogo"),
-    fundoResultado: document.getElementsByClassName("fundoResultado")[0]
+    telaConfiguracao: document.getElementById("telaConfiguracao"),
+    qtdBandeiras: document.getElementById("labelQtdBandeiras")
 }
 
 const text = {
@@ -65,13 +63,12 @@ setInterval(function(){
 function iniciarJogo(){
 
     //Define os atributos iniciais
-    boolJogando = true
     matriz = []
-    elemento.lableTempo.textContent = "000"
+    boolJogando = true
+    tempoDeJogo = elemento.lableTempo.textContent
+    elemento.telaConfiguracao.classList.add("inativo")
     elemento.qtdBandeiras.textContent = elemento.inputMinas.value
     camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
-
-    trocarClasse(elemento.telaConfiguracao, "telaConfiguracao", "disable")
 
     for(l=0; l<elemento.inputLinhas.value; l++){
 
@@ -83,14 +80,15 @@ function iniciarJogo(){
     let localBombas = criarCampo(matriz)
     
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
-    elemento.statusJogo.classList.add('enable')
-    elemento.areaCampoMinado.classList.add('enable')
+    elemento.areaCampoMinado.classList.add('ativo')
+    elemento.statusJogo.classList.add('ativo')
 
     // Click do mouse nos campos
-    document.querySelectorAll('.campo').forEach((element) => {
+    document.querySelectorAll(".campo").forEach((element) => {
+
         element.onclick = (e) => {
 
-            if(!boolJogando || !campoDisponivel(e.target)) return
+            if(element.classList.contains("campoAberto") || e.target.classList.contains("bandeira")) return
 
             var l = parseInt(e.target.dataset.linha)
             var c = parseInt(e.target.dataset.coluna)
@@ -108,20 +106,20 @@ function iniciarJogo(){
         }
         element.oncontextmenu = (e) => {
 
-            e.preventDefault();
-            if(!boolJogando) return            
+            e.preventDefault();  
+            if(e.target.classList.contains("campoAberto")) return
 
-            if(campoDisponivel(e.target) && elemento.qtdBandeiras.textContent > 0){
+            if(e.target.classList.contains("bandeira")){
 
+                e.target.classList.remove("bandeira")  
+                elemento.qtdBandeiras.textContent++       
+            }
+            else if(elemento.qtdBandeiras.textContent > 0){
+                
                 e.target.classList.add("bandeira")
                 elemento.qtdBandeiras.textContent--
                 verificarVitoria()
-            }
-            else if(e.target.classList.contains("bandeira")){
-                
-                e.target.classList.remove("bandeira")
-                elemento.qtdBandeiras.textContent++
-            }  
+            } 
         }
     })
 }
@@ -132,19 +130,13 @@ function trocarClasse(elementoAlvo, classeAntiga, classeNova){
     elementoAlvo.classList.add(classeNova)
 }
 
-function campoDisponivel(campo){
-
-    if(campo.classList.contains("campoFechado") && !campo.classList.contains("bandeira")) return true
-    return false
-}
-
 function trocarFundo(element, somaLinhaColuna){
 
     trocarClasse(element, "campoFechado", "campoAberto")
     if(somaLinhaColuna%2) trocarClasse(element, "campoFechadoEscuro", "campoAbertoEscuro")
 }
 
-function mostrarNumero(e, numero, soma){
+function mostrarNumero(e, numero){
 
     e.textContent = numero
     e.style.color = coloracaoNumeros[parseInt(numero)-1]
@@ -184,7 +176,11 @@ function incrementarValores(matriz, l, c){
 }
 
 function criarCampoHTML(matriz){
-    let htmlFinal = '<div class="fundo"></div>'
+    let htmlFinal = `<div id="fundoParaEscurecer"></div> 
+                     <div id="fundoResultado">
+                         <div id="mensagemResultado"></div>
+                         <button onclick="reiniciarJogo()">Voltar</button>
+                     </div>`
 
     let fundoNormal = true;
     
@@ -251,7 +247,7 @@ function jogoPerdido(campo, localBombas){
         if(i < localBombas.length) {
 
             //Interromper 
-            document.querySelectorAll('#areaCampo > div > div').forEach((element) => {
+            document.querySelectorAll(".campo").forEach((element) => {
                 element.onclick = (e) => {
                     
                     while(i < localBombas.length-1) mostrarBombaDaPosicao(localBombas[i++])
@@ -268,14 +264,14 @@ function jogoPerdido(campo, localBombas){
 
 function jogoTerminou(resultado){
 
-    elemento.resultadoJogo[0].textContent = resultado
-    document.getElementsByClassName("fundo")[0].classList.add("fundoEscurece")
-    elemento.fundoResultado.style.display = 'flex'
+    document.getElementById("mensagemResultado").textContent = resultado
+    document.getElementById("fundoParaEscurecer").classList.add("fundoAtivo")
+    document.getElementById("fundoResultado").classList.add("ativo")
 }
 
 function verificarVitoria(){
-    if(camposOcultos == elemento.inputMinas.value && elemento.qtdBandeiras.textContent == 0){
-        
+
+    if(camposOcultos == elemento.inputMinas.value && elemento.qtdBandeiras.textContent == 0) {
         boolJogando = false
         jogoTerminou(text.ganhou)   
     }
@@ -295,15 +291,9 @@ function mostrarBombaDaPosicao([x, y]){
 
 function reiniciarJogo(){
 
-    tempoDeJogo = 0
     boolTempoMaximo = false
-    let resultadoJogo = document.querySelectorAll(".resultadoJogo")
-
-    elemento.fundoResultado.style.display = 'none'
-    for(e of resultadoJogo) e.classList.remove("enable")
-    trocarClasse(elemento.telaConfiguracao, "disable", "telaConfiguracao")
-    elemento.areaCampoMinado.classList.remove("campoEscurecido", "tremer")
-    elemento.areaCampoMinado.classList.remove("enable")
-    elemento.statusJogo.classList.remove("enable")
-
+    elemento.lableTempo.textContent = "000"
+    elemento.areaCampoMinado.className = ""
+    elemento.telaConfiguracao.className = ""
+    elemento.statusJogo.className = ""
 }
