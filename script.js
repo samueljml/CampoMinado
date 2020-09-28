@@ -3,6 +3,10 @@ let boolJogando = false,
     tempoDeJogo = 0
     matriz = [];
 
+const limiteMinimoLinhaColuna = 6,
+      limiteMaximoLinhaColuna = 15,
+      tempoMaximo = 999;
+
 const elemento = {
     inputMinas: document.getElementById("qtdBombas"),
     inputLinhas: document.getElementById("altura"),
@@ -17,8 +21,8 @@ const elemento = {
 
 const text = {
     bomba: "*",
-    perdeu: 'Você Perdeu',
-    ganhou: 'Você Ganhou'
+    perdeu: 'Voce Perdeu',
+    ganhou: 'Voce Ganhou'
 }
 
 const coloracaoNumeros = [
@@ -36,8 +40,8 @@ const coloracaoNumeros = [
 elemento.Linhas_e_colunas.forEach((element) => {
     element.onchange = (e) => {
 
-        if(e.target.value < 5) e.target.value = 5;
-        else if(e.target.value > 15) e.target.value = 15;
+        if(e.target.value < limiteMinimoLinhaColuna) e.target.value = limiteMinimoLinhaColuna;
+        else if(e.target.value > limiteMaximoLinhaColuna) e.target.value = limiteMaximoLinhaColuna;
         
         if(elemento.inputMinas.value > elemento.inputLinhas.value * elemento.inputColunas.value){
             elemento.inputMinas.value = elemento.inputLinhas.value * elemento.inputColunas.value - 1
@@ -57,7 +61,7 @@ elemento.inputMinas.onchange = (e) => {
 //Atualiza tempo de jogo
 setInterval(function(){
 
-    if(boolJogando && tempoDeJogo++ < 999) elemento.lableTempo.textContent = ("000" + tempoDeJogo).slice(-3);
+    if(boolJogando && tempoDeJogo++ < tempoMaximo) elemento.lableTempo.textContent = ("000" + tempoDeJogo).slice(-3);
 }, 1000);
 
 function iniciarJogo(){

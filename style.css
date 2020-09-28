@@ -16,23 +16,34 @@ body{
     background: gray;
     user-select: none;
 }
+h1 {
+    display: flex;
+    margin: 0;
+    line-height: 32px;
+    font-size: 17.384pt;
+    font-family: mineFont;
+}
 #statusJogo{
     display: none;
     align-items: center;
     justify-content: space-between;
     align-self: center;
-    width: 215px;
+    width: auto;
     height: auto;
     margin-bottom: 10px;
-    padding: 6px 10px;
+    padding: 6px 5px;
     background: rgb(29, 124, 103);
     border: 5px solid black;
     border-radius: 5px;  
+}
+#statusJogo > *{
+    margin: 0px 5px;
 }
 #labelQtdBandeiras, #labelTempo{
     font-size: 32pt;
     line-height: 36px;
     font-family: "Segoe UI";
+    font-weight: bold;
 }
 #qtdBombas{
     width: 253px;
@@ -131,20 +142,12 @@ img{
     animation: shake 0.4s;
     transition: all 3s;
 }
-h1 {
-    display: flex;
-    margin: 0;
-    line-height: 40px;
-    font-size: 29.6pt;
-    font-family: "Segoe UI";
-}
 #divisor {
-    align-self: center;
-    padding: 0 10px;
-    font-size: 20pt;
-    line-height: 25px;
-    font-family: "Segoe UI";
+    padding: 0px 10px;
+    font-family: mineFont;
     font-weight: bold;
+    font-size: 14pt;
+    line-height: 58px;
 }
 input {
     width: 100%;
@@ -153,8 +156,9 @@ input {
     background: rgb(29, 124, 103);
     border: 3px solid black;
     border-radius: 3px;
+    font-family: mineFont;
     font-weight: bold;
-    font-size: 16pt;
+    font-size: 14pt;
 }
 #proporcao{
     display: flex;
@@ -176,8 +180,9 @@ button {
     background: rgb(29, 124, 103);
     border: 3px solid black;
     border-radius: 3px;
-    font-size: 14pt;
+    font-size: 15pt;
     font-weight: bold;
+    font-family: mineFont;
     cursor: pointer;
 }
 button:hover {
@@ -201,14 +206,15 @@ button:focus {
 }
 #mensagemResultado {
     display: block;
-    font-size: 20pt;
+    font-size: 14pt;
     font-weight: bold;
+    font-family: mineFont;
 }
 #fundoResultado > button {
     width: 100%;
     height: 50px;
     margin: 0;
-    font-size: 20pt;
+    font-size: 14pt;
 }
 .shakeAnimation {
     animation: "shake 0.4s";
