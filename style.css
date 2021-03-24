@@ -12,6 +12,7 @@ body{
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    min-height: 420px;
     margin: 0;
     background: gray;
     user-select: none;
@@ -127,7 +128,7 @@ img{
 #areaCampo{
     position: relative;
     display: none;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     align-items: center;
     justify-content: space-around;
     width: auto;

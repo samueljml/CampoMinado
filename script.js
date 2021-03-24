@@ -3,7 +3,7 @@ let boolJogando = false,
     tempoDeJogo = 0
     matriz = [];
 
-const limiteMinimoLinhaColuna = 6,
+const limiteMinimoLinhaColuna = 7,
       limiteMaximoLinhaColuna = 15,
       tempoMaximo = 999;
 
