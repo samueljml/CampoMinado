@@ -72,14 +72,8 @@ setInterval(function(){
 
 function iniciarJogo(){
 
-    //Define os atributos iniciais
     matriz = []
-    boolJogando = true
-    tempoDeJogo = elemento.lableTempo.textContent
-    elemento.imgVoltar.style.display = "flex"
-    elemento.telaConfiguracao.classList.remove("ativo")
-    elemento.qtdBandeiras.textContent = elemento.inputMinas.value
-    camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
+    definirAtributosIniciaisDoJogo()
 
     for(l=0; l<elemento.inputLinhas.value; l++){
 
@@ -87,12 +81,12 @@ function iniciarJogo(){
         for(c=0; c<elemento.inputColunas.value; c++) matriz[l][c] = 0
     }
     
-    // Insere as minas e os numeros na matriz e retorna as coordenas das bombas
+    // Insere as minas e os numeros na matriz e retorna as coordenadas das bombas
     let localBombas = criarCampo(matriz)
     
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
-    elemento.areaCampoMinado.classList.add('ativo')
-    elemento.statusJogo.classList.add('ativo')
+    mostrarElemento(elemento.areaCampoMinado)
+    mostrarElemento(elemento.statusJogo)
 
     // Click do mouse nos campos
     document.querySelectorAll(".campo").forEach((element) => {
@@ -133,6 +127,15 @@ function iniciarJogo(){
             } 
         }
     })
+}
+
+function definirAtributosIniciaisDoJogo() {
+    boolJogando = true
+    elemento.imgVoltar.style.display = "flex";
+    tempoDeJogo = elemento.lableTempo.textContent
+    ocultarElemento(elemento.telaConfiguracao)
+    elemento.qtdBandeiras.textContent = elemento.inputMinas.value
+    camposOcultos = elemento.inputColunas.value * elemento.inputLinhas.value
 }
 
 function trocarClasse(elementoAlvo, classeAntiga, classeNova){
@@ -304,9 +307,9 @@ function voltarParaTelaInicial(){
 
     boolJogando = false
     resetarTempoDeJogo();
-    elemento.areaCampoMinado.className = ""
-    elemento.telaConfiguracao.classList.add("ativo")
-    elemento.statusJogo.className = ""
+    removerClasses(elemento.areaCampoMinado)
+    removerClasses(elemento.statusJogo)
+    mostrarElemento(elemento.telaConfiguracao)
 }
 
 function cancelar() {
@@ -321,6 +324,18 @@ function mostrarMensagem(botoes, mensagem) {
     document.getElementById("mensagemResultado").textContent = mensagem
     botoes.style.display = "flex"
 } 
+
+function ocultarElemento(e) {
+    e.classList.remove("ativo")
+}
+
+function mostrarElemento(e) {
+    e.classList.add("ativo")
+}
+
+function removerClasses(e) {
+    e.className = ""
+}
 
 function resetarTempoDeJogo() {
     boolTempoMaximo = false
