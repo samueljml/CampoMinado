@@ -59,22 +59,48 @@ img{
     width: auto;
     height: auto;
 }
-#fundoResultado{
+#fundoMensagem{
     position: absolute;
     z-index: 1;
     display: none;
     align-self: center;
     flex-direction: column;
-    justify-content: space-between;
-    height: 85px;
-    width: auto;
+    justify-content: space-around;
+    height: 100px;
+    width: 244px;
     padding: 10px;
     border-radius: 5px;
     border: 5px solid #000;
     background: rgb(29, 124, 103);
 }
-#telaConfiguracao {
+#btnVoltar{
+    height: 50px;
+}
+#fundoResultado{
     display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 85px;
+}
+#confirmacao{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    font-size: 12pt;
+    font-weight: bold;
+    font-family: mineFont;
+}
+#btnVoltar {
+    display: none;
+}
+#confirmacao > button {
+    width: 49%;
+    height: 40px;
+    font-size: 12pt;
+}
+#telaConfiguracao {
+    display: none;
     flex-flow: column wrap;
     align-items: center;
     justify-content: space-between;
@@ -205,16 +231,20 @@ button:focus {
     user-select: none;
 }
 #mensagemResultado {
-    display: block;
+    display: flex;
+    width: 297px;
     font-size: 14pt;
     font-weight: bold;
     font-family: mineFont;
 }
 #fundoResultado > button {
     width: 100%;
-    height: 50px;
+    height: 45px;
     margin: 0;
     font-size: 14pt;
+}
+#confirmacao {
+    display: none;
 }
 .shakeAnimation {
     animation: "shake 0.4s";
