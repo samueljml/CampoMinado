@@ -176,6 +176,21 @@ img{
     font-size: 14pt;
     line-height: 58px;
 }
+input[type=number]::-webkit-inner-spin-button { 
+    -webkit-appearance: none;
+    cursor:pointer;
+    display:block;
+    width:17px;
+    height: 26px;
+    color: #333;
+    text-align:center;
+    position:relative;
+}    
+input[type=number]:hover::-webkit-inner-spin-button { 
+    background: url('assets/imgs/arrows.png') no-repeat 50% 50%;  
+    position: relative;
+    right: 4px;
+}
 input {
     width: 100%;
     padding: 13px;
