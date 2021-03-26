@@ -191,6 +191,10 @@ input[type=number]:hover::-webkit-inner-spin-button {
     position: relative;
     right: 4px;
 }
+input:focus{
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(19, 84, 70);
+}
 input {
     width: 100%;
     padding: 13px;
