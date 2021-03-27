@@ -3,8 +3,13 @@ let boolJogando = false,
     tempoDeJogo = 0
     matriz = [];
 
-const limiteMinimoLinhaColuna = 7,
-      limiteMaximoLinhaColuna = 15,
+const limiteMinimoColuna = 6,
+      limiteMinimoLinha = 3,
+      margemWidth = 100,
+      margemHeight = 230,
+      camposProporcao = 42,
+      limiteMaximoLinha = parseInt((window.screen.height - margemHeight) / camposProporcao),
+      limiteMaximoColuna = parseInt((window.screen.width - margemWidth) / camposProporcao),
       tempoMaximo = 999;
 
 const elemento = {
@@ -13,6 +18,8 @@ const elemento = {
     inputLinhas: document.getElementById("altura"),
     inputColunas: document.getElementById("largura"),
     Linhas_e_colunas: document.querySelectorAll("#proporcao > input"),
+    linhas: document.getElementById("largura"),
+    colunas: document.getElementById("altura"),
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableTempo: document.getElementById("labelTempo"),
@@ -46,15 +53,23 @@ voltar.onclick = (e) => {
 //Limitação dos valores do input (linha e coluna)
 elemento.Linhas_e_colunas.forEach((element) => {
     element.onchange = (e) => {
-        e.target.value = parseInt(e.target.value)
-        if(e.target.value < limiteMinimoLinhaColuna) e.target.value = limiteMinimoLinhaColuna;
-        else if(e.target.value > limiteMaximoLinhaColuna) e.target.value = limiteMaximoLinhaColuna;
+        if(e.target.id == "largura") {
+            checarLimites(e.target, limiteMinimoLinha, limiteMaximoLinha)
+        }
+        else {
+            checarLimites(e.target, limiteMinimoColuna, limiteMaximoColuna)
+        }
         
         if(elemento.inputMinas.value > elemento.inputLinhas.value * elemento.inputColunas.value){
             elemento.inputMinas.value = elemento.inputLinhas.value * elemento.inputColunas.value - 1
-        }
+         }
     }
 });
+
+function checarLimites (elemento, limiteMinimo, limiteMaximo) {
+    if(elemento.value < limiteMinimo) elemento.value = limiteMinimo
+    else if(elemento.value > limiteMaximo) elemento.value = limiteMaximo
+}
 
 //Limitação do valor do input (Quantidade de bombas)
 elemento.inputMinas.onchange = (e) => {   
@@ -65,6 +80,7 @@ elemento.inputMinas.onchange = (e) => {
     if (e.target.value >= l*c) e.target.value = (l*c) -1;
     else if (e.target.value < 1) e.target.value = 1;
 }
+
 //Evitar valores decimais no input
 elemento.inputs.forEach((input) => {
     input.onkeypress = (e) => {
