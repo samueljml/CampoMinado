@@ -8,6 +8,7 @@ const limiteMinimoLinhaColuna = 7,
       tempoMaximo = 999;
 
 const elemento = {
+    inputs: document.querySelectorAll("input"),
     inputMinas: document.getElementById("qtdBombas"),
     inputLinhas: document.getElementById("altura"),
     inputColunas: document.getElementById("largura"),
@@ -63,6 +64,15 @@ elemento.inputMinas.onchange = (e) => {
     if (e.target.value >= l*c) e.target.value = (l*c) -1;
     else if (e.target.value < 1) e.target.value = 1;
 }
+//Evitar valores decimais no input
+elemento.inputs.forEach((input) => {
+    input.onkeypress = (e) => {
+
+        if(isNaN(e.key)) {
+            e.preventDefault();
+        }
+    }
+})
 
 //Atualiza tempo de jogo
 setInterval(function(){
