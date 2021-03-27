@@ -130,8 +130,9 @@ img{
     display: none;
     flex-flow: row nowrap;
     align-items: center;
+    align-self: center;
     justify-content: space-around;
-    width: auto;
+    width: fit-content;
     height: auto;
     border-radius: 5px;
     border: 5px solid #000;
