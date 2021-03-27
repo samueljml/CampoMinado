@@ -314,6 +314,7 @@ function verificarVitoria(){
 
     if(camposOcultos == elemento.inputMinas.value && elemento.qtdBandeiras.textContent == 0) {
         boolJogando = false
+        elemento.imgVoltar.style.display = "none";
         mostrarMensagem(document.getElementById("btnVoltar"), text.ganhou)  
     }
 }
