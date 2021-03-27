@@ -206,6 +206,9 @@ input {
     font-weight: bold;
     font-size: 14pt;
 }
+::selection {
+    background: rgb(19, 84, 70);
+}
 #proporcao{
     display: flex;
     justify-content: space-between;
