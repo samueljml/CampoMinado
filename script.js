@@ -18,8 +18,8 @@ const elemento = {
     inputLinhas: document.getElementById("altura"),
     inputColunas: document.getElementById("largura"),
     Linhas_e_colunas: document.querySelectorAll("#proporcao > input"),
-    linhas: document.getElementById("largura"),
-    colunas: document.getElementById("altura"),
+    linhas: document.getElementById("altura"),
+    colunas: document.getElementById("largura"),
     statusJogo: document.getElementById("statusJogo"),
     areaCampoMinado: document.getElementById("areaCampo"),
     lableTempo: document.getElementById("labelTempo"),
@@ -32,7 +32,7 @@ const text = {
     bomba: "*",
     perdeu: 'Voce Perdeu!',
     ganhou: 'Voce Ganhou!',
-    confirmacao: 'Voltar a tela inicial?'
+    confirmacao: 'Voltar para tela inicial?'
 }
 
 const coloracaoNumeros = [
@@ -53,7 +53,8 @@ voltar.onclick = (e) => {
 //Limitação dos valores do input (linha e coluna)
 elemento.Linhas_e_colunas.forEach((element) => {
     element.onchange = (e) => {
-        if(e.target.id == "largura") {
+        e.target.value = parseInt(e.target.value)
+        if(e.target.id == "altura") {
             checarLimites(e.target, limiteMinimoLinha, limiteMaximoLinha)
         }
         else {
@@ -102,10 +103,10 @@ function iniciarJogo(){
     matriz = []
     definirAtributosIniciaisDoJogo()
 
-    for(l=0; l<elemento.inputLinhas.value; l++){
+    for(l=0; l<elemento.inputColunas.value; l++){
 
         matriz[l] = []
-        for(c=0; c<elemento.inputColunas.value; c++) matriz[l][c] = 0
+        for(c=0; c<elemento.inputLinhas.value; c++) matriz[l][c] = 0
     }
     
     // Insere as minas e os numeros na matriz e retorna as coordenadas das bombas
@@ -114,6 +115,9 @@ function iniciarJogo(){
     elemento.areaCampoMinado.innerHTML = criarCampoHTML(matriz)
     mostrarElemento(elemento.areaCampoMinado)
     mostrarElemento(elemento.statusJogo)
+
+    // fundoMensagem maior se o campo for muito grande
+    selectFundoMensagemClass()
 
     // Click do mouse nos campos
     document.querySelectorAll(".campo").forEach((element) => {
@@ -156,6 +160,18 @@ function iniciarJogo(){
     })
 }
 
+function selectFundoMensagemClass(){
+    let fundoMensagem = document.getElementById("fundoMensagem")
+    if(elemento.inputLinhas.value > 14 && elemento.inputColunas.value > 29) {
+        trocarClasse(fundoMensagem, "mensagem", "mensagemGrande")
+    }
+    else {
+        if(fundoMensagem.classList.contains("mensagemGrande")) {
+            trocarClasse(fundoMensagem, "mensagemGrande", "mensagem")
+        }
+    }
+}
+
 function definirAtributosIniciaisDoJogo() {
     boolJogando = true
     elemento.imgVoltar.style.display = "flex";
@@ -189,8 +205,8 @@ function criarCampo(matriz){
     let localBombas = []
 
     while(qtdBombas > 0){
-        let x = Math.round(Math.random() * (elemento.inputLinhas.value-1))
-        let y = Math.round(Math.random() * (elemento.inputColunas.value-1))
+        let x = Math.round(Math.random() * (elemento.inputColunas.value-1))
+        let y = Math.round(Math.random() * (elemento.inputLinhas.value-1))
 
         if(matriz[x][y] != text.bomba){
             matriz[x][y] = text.bomba
@@ -218,7 +234,7 @@ function incrementarValores(matriz, l, c){
 
 function criarCampoHTML(matriz){
     let htmlFinal = `<div id="fundoParaEscurecer"></div> 
-                     <div id="fundoMensagem">
+                     <div id="fundoMensagem" class="mensagem">
                      <div id="mensagemResultado"></div>
                         <div>
                             <button id="btnVoltar" onclick="voltarParaTelaInicial()">Voltar</button>

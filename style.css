@@ -66,16 +66,30 @@ img{
     display: none;
     align-self: center;
     flex-direction: column;
-    justify-content: space-around;
-    height: 100px;
-    width: 230px;
-    padding: 10px;
+    justify-content: space-evenly;
+    padding: 12px 10px;
     border-radius: 5px;
     border: 5px solid #000;
     background: rgb(29, 124, 103);
 }
-#btnVoltar{
+.mensagem {
+    height: 100px;
+    width: 230px;
+}
+.mensagem > div > button {
     height: 50px;
+}
+.mensagemGrande {
+    height: auto;
+    width: 315px;
+}
+.mensagemGrande > div > button {
+    height: 63px;
+    font-size: 16pt;
+}
+.mensagemGrande > #mensagemResultado {
+    font-size: 18.8pt;
+    margin-bottom: 10px;
 }
 #fundoResultado{
     display: flex;
@@ -97,8 +111,6 @@ img{
 }
 #confirmacao > button {
     width: 49%;
-    height: 40px;
-    font-size: 12pt;
 }
 #telaConfiguracao {
     display: none;
@@ -255,8 +267,9 @@ button:focus {
 }
 #mensagemResultado {
     display: flex;
-    width: 297px;
-    font-size: 14pt;
+    width: 100%;
+    margin-bottom: 3px;
+    font-size: 13.8pt;
     font-weight: bold;
     font-family: mineFont;
 }
