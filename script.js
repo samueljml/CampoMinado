@@ -46,6 +46,7 @@ const coloracaoNumeros = [
     "midnightblue"
 ]
 
+// Exibir mensagem para voltar a tela inicial
 voltar.onclick = (e) => {
     mostrarMensagem(document.getElementById("confirmacao"), text.confirmacao)
 };
@@ -60,36 +61,42 @@ elemento.Linhas_e_colunas.forEach((element) => {
         else {
             checarLimites(e.target, limiteMinimoColuna, limiteMaximoColuna)
         }
-        
-        if(elemento.inputMinas.value > elemento.inputLinhas.value * elemento.inputColunas.value){
-            elemento.inputMinas.value = elemento.inputLinhas.value * elemento.inputColunas.value - 1
-         }
+
+        checarLimites(e.target, 1,  (elemento.inputLinhas.value * elemento.inputColunas.value)-1)
     }
 });
-
-function checarLimites (elemento, limiteMinimo, limiteMaximo) {
-    if(elemento.value < limiteMinimo) elemento.value = limiteMinimo
-    else if(elemento.value > limiteMaximo) elemento.value = limiteMaximo
-}
 
 //Limitação do valor do input (Quantidade de bombas)
 elemento.inputMinas.onchange = (e) => {   
     e.target.value = parseInt(e.target.value)
-    let l = elemento.inputLinhas.value
-    let c = elemento.inputColunas.value
-
-    if (e.target.value >= l*c) e.target.value = (l*c) -1;
-    else if (e.target.value < 1) e.target.value = 1;
+    checarLimites(e.target, 1,  (elemento.inputLinhas.value * elemento.inputColunas.value)-1)
 }
 
-//Evitar valores decimais no input
-elemento.inputs.forEach((input) => {
-    input.onkeypress = (e) => {
 
+elemento.inputs.forEach((input) => {
+
+    //Evitar valores decimais no input
+    input.onkeypress = (e) => {
         if(isNaN(e.key)) {
             e.preventDefault();
         }
     }
+
+    //Incrementar inputs com o scroll do mouse
+    input.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        incremento = -event.deltaY/100
+    
+        elemento.inputs.forEach((input) =>  {
+            if(input === document.activeElement) {
+                input.value = parseInt(input.value) + incremento
+    
+                checarLimites(elemento.inputLinhas, limiteMinimoLinha, limiteMaximoLinha)
+                checarLimites(elemento.inputColunas, limiteMinimoColuna, limiteMaximoColuna)
+                checarLimites(elemento.inputMinas, 1, (elemento.inputLinhas.value * elemento.inputColunas.value)-1)
+            }
+        })
+    });
 })
 
 //Atualiza tempo de jogo
@@ -384,4 +391,9 @@ function removerClasses(e) {
 function resetarTempoDeJogo() {
     boolTempoMaximo = false
     elemento.lableTempo.textContent = "000"
+}
+
+function checarLimites (elemento, limiteMinimo, limiteMaximo) {
+    if(elemento.value < limiteMinimo) elemento.value = limiteMinimo
+    else if(elemento.value > limiteMaximo) elemento.value = limiteMaximo
 }
