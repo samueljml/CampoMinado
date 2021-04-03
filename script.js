@@ -54,7 +54,7 @@ voltar.onclick = (e) => {
 //Limitação dos valores do input (linha e coluna)
 elemento.Linhas_e_colunas.forEach((element) => {
     element.onchange = (e) => {
-        e.target.value = parseInt(e.target.value)
+        e.target.value = parseInt(0 + e.target.value)
         if(e.target.id == "altura") {
             checarLimites(e.target, limiteMinimoLinha, limiteMaximoLinha)
         }
@@ -68,7 +68,7 @@ elemento.Linhas_e_colunas.forEach((element) => {
 
 //Limitação do valor do input (Quantidade de bombas)
 elemento.inputMinas.onchange = (e) => {   
-    e.target.value = parseInt(e.target.value)
+    e.target.value = parseInt(0 + e.target.value)
     checarLimites(e.target, 1,  (elemento.inputLinhas.value * elemento.inputColunas.value)-1)
 }
 
