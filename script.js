@@ -137,7 +137,10 @@ function iniciarJogo(){
             var c = parseInt(e.target.dataset.coluna)
 
             if(matriz[l][c] == text.bomba) pararJogoEMostrarBombas(e.target, localBombas)            
-            else if(matriz[l][c] == 0) AbrirEspacosVazios(matriz, l, c)
+            else if(matriz[l][c] == 0) {
+                AbrirEspacosVazios(matriz, l, c)
+                verificarVitoria()
+            }
             else{
                 
                 mostrarNumero(e.target, matriz[l][c])
@@ -335,7 +338,7 @@ function pararJogoEMostrarBombas(campo, localBombas){
 
 function verificarVitoria(){
 
-    if(camposOcultos == elemento.inputMinas.value && elemento.qtdBandeiras.textContent == 0) {
+    if(camposOcultos == elemento.inputMinas.value) {
         boolJogando = false
         elemento.imgVoltar.style.display = "none";
         mostrarMensagem(document.getElementById("btnVoltar"), text.ganhou)  
