@@ -37,7 +37,7 @@ h1 {
     border: 5px solid black;
     border-radius: 5px;  
 }
-#statusJogo > *{
+#statusJogo > * {
     margin: 0px 5px;
 }
 #labelQtdBandeiras, #labelTempo{
@@ -46,8 +46,23 @@ h1 {
     font-family: "Segoe UI";
     font-weight: bold;
 }
-#qtdBombas{
-    width: 253px;
+#bombas{
+    width: 100%;
+    box-sizing: border-box;
+}
+#bombaIcon {
+    position: absolute;
+    padding-right: 16px;
+    padding-bottom: 15px;
+    padding-top: 17px;
+    padding-left: 21px;
+    font-size: 14pt;
+    font-family: mineFont;
+    border-right: 3px solid black;
+}
+#qtdBombas {
+    width: 188px;
+    padding-left: 80px;
 }
 img{
     width: 36px;
