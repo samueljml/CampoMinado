@@ -1,6 +1,6 @@
 # Campo Minado
 
-Campo minado feito em HTML, CSS e Javascript puro. Ainda não finalizado.
+Campo minado feito em HTML, CSS e Javascript puro.
 
 # Como jogar
 * Indique a quantidade de minas e a dimenção.
